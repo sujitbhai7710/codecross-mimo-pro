@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeCross Answer Archive - All Past Puzzle Solutions</title>
+  <meta name="description" content="Browse all past CodeCross puzzle answers. Complete archive organized by date with auto-updating daily.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <span class="logo-icon">🧩</span>
+        <h1>CodeCross <span class="highlight">Daily</span></h1>
+      </div>
+      <nav>
+        <a href="index.html">Today</a>
+        <a href="archive.html" class="active">Archive</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>📚 Answer Archive</h2>
+      <p class="subtitle">All past puzzle solutions — auto-updated daily</p>
+      <div class="source-badge">
+        <span class="dot"></span>
+        <span id="last-updated">Checking...</span>
+      </div>
+    </section>
+
+    <section class="archive-controls">
+      <input type="text" id="search-input" placeholder="Search by theme or date..." class="search-box">
+    </section>
+
+    <section class="archive-list" id="archive-container">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading archive...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>CodeCross Daily Answers — Auto-updated from official API</p>
+      <p class="disclaimer">Reverse-engineered for educational purposes. Not affiliated with Fanatee.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => loadArchive());
+  </script>
+</body>
+</html>

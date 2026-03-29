@@ -1,0 +1,19 @@
+{
+  "site": {
+    "name": "CodeCross Daily Answers",
+    "description": "Daily puzzle answers fetched automatically from CodyCross API",
+    "lastUpdated": "2026-03-30",
+    "dataSource": "CodyCross API (codydev.fulano.com.br/Puzzle/GetMundo)",
+    "encryption": "AES-256-CBC",
+    "apiEndpoint": "https://codydev.fulano.com.br",
+    "updateMethod": "GitHub Actions (automated daily fetch + decrypt)"
+  },
+  "answers": [
+    {
+      "date": "2026-03-30",
+      "theme": "Data fetcher deployed — decryption key extraction in progress",
+      "world": 1,
+      "groups": []
+    }
+  ]
+}
