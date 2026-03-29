@@ -1,0 +1,76 @@
+name: Fetch CodyCross Daily Answers
+
+on:
+  schedule:
+    # Run every day at 00:05 UTC
+    - cron: '5 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-answers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pycryptodome requests
+
+      - name: Fetch and decrypt puzzle data
+        run: python fetcher/fetch_answers.py
+        continue-on-error: true
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet data/answers.json && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push updates
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "CodeCross Bot"
+          git config user.email "bot@codecross-daily.com"
+          git add data/
+          git commit -m "Auto-update answers $(date +%Y-%m-%d)"
+          git push
+
+  deploy:
+    needs: fetch-answers
+    runs-on: ubuntu-latest
+    if: always()
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          exclude: |
+            fetcher/**
+            .github/**
+            *.py
+            ANALYSIS.md
+            REPORT.md
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
