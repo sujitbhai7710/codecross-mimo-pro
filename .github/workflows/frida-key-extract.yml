@@ -30,7 +30,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-api-29-x86-v3
+          key: avd-api-29-x86-v4
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -47,30 +47,16 @@ jobs:
           disable-animations: true
           script: echo "AVD ready"
 
-      - name: Download CodyCross APK
-        run: |
-          curl -L -o /tmp/codycross.apks "https://dl.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" || \
-          curl -L -A "Mozilla/5.0" -o /tmp/codycross.apks "https://d.apkpure.net/b/APK/com.fanatee.cody?version=latest" || true
-          ls -lh /tmp/codycross.apks 2>/dev/null
-
-      - name: Install Frida tools
+      - name: Install Frida + download APK + Frida server
         run: |
           pip install frida-tools 2>&1 | tail -3
-          frida --version
-          echo "Frida version saved"
+          echo "FV=$(frida --version 2>/dev/null | head -1)" >> $GITHUB_ENV
+          curl -L -o /tmp/codycross.apks "https://dl.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" || true
+          curl -L -o /tmp/fs.xz "https://github.com/frida/frida/releases/download/${{ env.FV }}/frida-server-${{ env.FV }}-android-x86.xz"
+          xz -d /tmp/fs.xz && mv /tmp/fs /tmp/frida-server && chmod +x /tmp/frida-server
+          ls -la /tmp/frida-server /tmp/codycross.apks
 
-      - name: Prepare APK and Frida server
-        run: |
-          mkdir -p /tmp/cxapk && cd /tmp/cxapk && unzip -o /tmp/codycross.apks 2>/dev/null || true
-          FV=$(frida --version 2>/dev/null | head -1)
-          echo "FV=$FV" >> $GITHUB_ENV
-          echo "Downloading frida-server $FV for x86..."
-          curl -L -o /tmp/fs.xz "https://github.com/frida/frida/releases/download/${FV}/frida-server-${FV}-android-x86.xz"
-          xz -d /tmp/fs.xz && mv /tmp/fs /tmp/frida-server
-          chmod +x /tmp/frida-server
-          ls -la /tmp/frida-server
-
-      - name: Run Frida extraction
+      - name: Run Frida extraction on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -80,10 +66,10 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            adb wait-for-device
-            sleep 10
-            adb install -r -t /tmp/cxapk/com.fanatee.cody.apk || true
-            adb install -r -t /tmp/cxapk/config.armeabi_v7a.apk || true
+            mkdir -p /tmp/cxapk
+            unzip -o /tmp/codycross.apks -d /tmp/cxapk
+            adb install -r -t /tmp/cxapk/com.fanatee.cody.apk 2>&1 || true
+            adb install -r -t /tmp/cxapk/config.armeabi_v7a.apk 2>&1 || true
             adb push /tmp/frida-server /data/local/tmp/frida-server
             adb shell chmod 755 /data/local/tmp/frida-server
             adb shell "/data/local/tmp/frida-server -D &"
@@ -93,17 +79,7 @@ jobs:
             python3 -m frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause &
             sleep 60
             kill %1 2>/dev/null || true
-            adb shell cat /tmp/frida-result.json 2>/dev/null || true
-
-      - name: Extract key from logs
-        if: always()
-        run: echo "KEY_FOUND=false" >> $GITHUB_ENV
 
       - name: Summary
         if: always()
-        run: |
-          echo "=========================================="
-          echo "  Automated emulator extraction did not"
-          echo "  find the AES key (expected on CI)."
-          echo "  Manual extraction on a real device needed."
-          echo "=========================================="
+        run: echo "Extraction attempt complete. Check logs for any captured AES key."
