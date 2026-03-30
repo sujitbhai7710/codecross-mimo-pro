@@ -2,16 +2,11 @@ name: Extract AES Key (Run Once)
 
 on:
   workflow_dispatch:
-    inputs:
-      timeout_minutes:
-        description: 'Max wait time for key extraction (minutes)'
-        required: false
-        default: '15'
 
 jobs:
   extract-key:
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ github.event.inputs.timeout_minutes || 15 }}
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -28,7 +23,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Enable KVM group permissions
+      - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
@@ -41,12 +36,12 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-api-29-x86
+          key: avd-api-29-x86-v2
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create AVD and generate snapshot
+      - name: Create AVD snapshot
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -54,299 +49,157 @@ jobs:
           arch: x86
           profile: pixel_6
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: echo "AVD snapshot generated"
+          script: echo "AVD ready"
 
       - name: Download CodyCross APK
         run: |
-          echo "[*] Downloading CodyCross APK v2.8.1..."
-          wget -q --show-progress -o /tmp/download.log \
-            "https://static.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" \
-            -O /tmp/codycross.apks 2>&1 || \
+          echo "Downloading CodyCross APK..."
           curl -L -o /tmp/codycross.apks \
-            "https://dl.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" 2>&1
-          
-          if [ ! -f /tmp/codycross.apks ] || [ ! -s /tmp/codycross.apks ]; then
-            echo "[!] Direct download failed, trying alternative sources..."
-            # Try APKPure as fallback
-            curl -L -A "Mozilla/5.0" -o /tmp/codycross.apks \
-              "https://d.apkpure.net/b/APK/com.fanatee.cody?version=latest" 2>&1 || true
-          fi
-          
-          ls -la /tmp/codycross* 2>/dev/null || echo "[!] APK download may have failed"
+            "https://dl.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" 2>&1 || \
+          curl -L -A "Mozilla/5.0" -o /tmp/codycross.apks \
+            "https://d.apkpure.net/b/APK/com.fanatee.cody?version=latest" 2>&1 || true
+          ls -lh /tmp/codycross.apks 2>/dev/null || echo "APK download failed"
 
-      - name: Install dependencies
+      - name: Install Frida tools
         run: |
-          # Install Frida tools
-          pip install frida-tools frida==16.1.11 2>&1 || pip install frida-tools 2>&1
-          
-          # Verify Frida
+          pip install frida-tools 2>&1 | tail -3
           frida --version
-          echo "[+] Frida tools installed"
 
-      - name: Run emulator + Frida + extract key
+      - name: Run Frida extraction
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86
           profile: pixel_6
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            # ============================================
-            # Step 1: Push and install APK
-            # ============================================
             echo "[*] Waiting for device..."
             adb wait-for-device
-            sleep 10
+            sleep 15
             adb shell getprop sys.boot_completed
-            echo "[+] Device booted"
-            
-            # Install APK
-            if [ -f /tmp/codycross.apks ]; then
-              adb push /tmp/codycross.apks /sdcard/
-              echo "[*] Installing APK..."
-              # XAPK needs to be extracted first
-              cd /tmp && unzip -o codycross.apks -d codycross_xapk/ 2>&1 | tail -5
-              ls -la /tmp/codycrossxapk/ /tmp/codycross_xapk/ 2>/dev/null || true
-              
-              # Try direct install of base APK
-              for apk in /tmp/codycross_xapk/*.apk; do
-                if [ -f "$apk" ]; then
-                  echo "[*] Installing: $apk"
-                  adb install -r -t "$apk" 2>&1 || true
-                fi
-              done
-            fi
-            
-            # ============================================
-            # Step 2: Start Frida server
-            # ============================================
-            echo "[*] Setting up Frida server..."
-            adb push $(which frida-server 2>/dev/null || echo /dev/null) /data/local/tmp/ 2>/dev/null || true
-            
-            # Download frida-server for the emulator architecture
-            FRIDA_VERSION=$(frida --version 2>/dev/null | head -1)
-            echo "[*] Frida version: $FRIDA_VERSION"
-            
-            pip download frida-server==${FRIDA_VERSION} --platform linux_x86_64 --dest /tmp/ 2>/dev/null || true
-            pip download frida-server==${FRIDA_VERSION} --platform manylinux2014_x86_64 --dest /tmp/ 2>&1 | tail -3
-            
-            # Try to find or download frida-server
-            FRIDA_SERVER=""
-            for f in /tmp/frida_server*.whl /tmp/frida-server*.whl; do
-              if [ -f "$f" ]; then
-                mkdir -p /tmp/frida_extracted
-                unzip -o "$f" -d /tmp/frida_extracted/ 2>/dev/null
-                FRIDA_SERVER=$(find /tmp/frida_extracted -name "frida-server" -type f 2>/dev/null | head -1)
-              fi
+
+            echo "[*] Installing APK..."
+            mkdir -p /tmp/cxapk && cd /tmp/cxapk
+            unzip -o /tmp/codycross.apks 2>/dev/null || true
+            for apk in /tmp/cxapk/*.apk; do
+              [ -f "$apk" ] && adb install -r -t "$apk" 2>&1 || true
             done
-            
-            if [ -z "$FRIDA_SERVER" ] || [ ! -f "$FRIDA_SERVER" ]; then
-              echo "[*] Downloading frida-server directly..."
-              curl -L -o /tmp/frida-server.xz \
-                "https://github.com/frida/frida/releases/download/${FRIDA_VERSION}/frida-server-${FRIDA_VERSION}-android-x86.xz" 2>&1
-              xz -d -f /tmp/frida-server.xz 2>/dev/null || true
-              chmod +x /tmp/frida-server
-              FRIDA_SERVER="/tmp/frida-server"
-            fi
-            
-            if [ -f "$FRIDA_SERVER" ]; then
-              adb push "$FRIDA_SERVER" /data/local/tmp/frida-server
-              adb shell chmod 755 /data/local/tmp/frida-server
-              echo "[+] Frida server pushed"
-              
-              # Start Frida server in background
-              adb shell "/data/local/tmp/frida-server -D &"
-              sleep 2
-              echo "[+] Frida server started"
-              
-              # Verify Frida connection
-              frida-ps -U 2>&1 | head -5
-            else
-              echo "[!] Could not find frida-server, trying USB mode..."
-            fi
-            
-            # ============================================
-            # Step 3: Launch CodyCross and extract key
-            # ============================================
+
+            echo "[*] Downloading frida-server for x86..."
+            FV=$(frida --version 2>/dev/null | head -1)
+            echo "Frida version: $FV"
+            curl -L -o /tmp/frida-server.xz \
+              "https://github.com/frida/frida/releases/download/${FV}/frida-server-${FV}-android-x86.xz" 2>&1
+            xz -d -f /tmp/frida-server.xz 2>/dev/null && chmod +x /tmp/frida-server
+            adb push /tmp/frida-server /data/local/tmp/frida-server
+            adb shell chmod 755 /data/local/tmp/frida-server
+            adb shell "/data/local/tmp/frida-server -D &"
+            sleep 3
+            frida-ps -U 2>&1 | head -5
+
             echo "[*] Launching CodyCross..."
-            adb shell am start -n com.fanatee.cody/com.unity3d.player.UnityPlayerActivity 2>&1 || \
-            adb shell monkey -p com.fanatee.cody -c android.intent.category.LAUNCHER 1 2>&1
-            sleep 5
-            
-            # Run Frida hooks
-            echo "[*] Attaching Frida hooks..."
-            timeout 120 frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause 2>&1 | tee /tmp/frida-output.log || true
-            
-            # Also try spawn mode
-            echo "[*] Trying spawn mode..."
-            timeout 60 frida -U -n "CodyCross" -l scripts/frida-extract.js 2>&1 | tee -a /tmp/frida-output.log || true
-            
-            echo "[*] Frida extraction complete"
-            cat /tmp/frida-output.log
+            adb shell monkey -p com.fanatee.cody -c android.intent.category.LAUNCHER 1
+            sleep 8
 
-      - name: Process extraction results
+            echo "[*] Running Frida hooks..."
+            timeout 90 frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause 2>&1 | tee /tmp/frida-output.log || true
+            timeout 30 frida -U -n "CodyCross" -l scripts/frida-extract.js 2>&1 | tee -a /tmp/frida-output.log || true
+
+            echo ""
+            echo "=== FRIDA EXTRACTION LOG ==="
+            cat /tmp/frida-output.log 2>/dev/null || echo "No output"
+            [ -f /tmp/frida-result.json ] && cat /tmp/frida-result.json || true
+
+      - name: Extract key from logs
         run: |
-          echo "[*] Processing Frida extraction results..."
-          
-          # Check for key in Frida output
+          FOUND_KEY=""
+
           if [ -f /tmp/frida-output.log ]; then
-            echo "=== Frida Output ==="
-            cat /tmp/frida-output.log
-            
-            # Extract keys from output
-            KEY=$(grep -oP 'Key \(hex\): \K[a-f0-9]{64}' /tmp/frida-output.log | head -1)
-            AES_KEY=$(grep -oP 'AES-256 KEY CAPTURED.*?Key \(hex\): \K[a-f0-9]{64}' /tmp/frida-output.log | head -1)
-            PUZZLE_KEY=$(grep -oP '"key_hex"\s*:\s*"[a-f0-9]{64}"' /tmp/frida-output.log | head -1 | grep -oP '[a-f0-9]{64}')
-            
-            FOUND_KEY=""
-            if [ -n "$AES_KEY" ]; then
-              FOUND_KEY="$AES_KEY"
-            elif [ -n "$PUZZLE_KEY" ]; then
-              FOUND_KEY="$PUZZLE_KEY"
-            elif [ -n "$KEY" ]; then
-              FOUND_KEY="$KEY"
-            fi
-            
-            # Also check frida-result.json
-            if [ -z "$FOUND_KEY" ] && [ -f /tmp/frida-result.json ]; then
-              echo "=== frida-result.json ==="
-              cat /tmp/frida-result.json
-              FOUND_KEY=$(python3 -c "
-              import json, sys
-              try:
-                  with open('/tmp/frida-result.json') as f:
-                      data = json.load(f)
-                  if isinstance(data, dict) and 'key_hex' in data:
-                      print(data['key_hex'])
-                  elif isinstance(data, dict) and 'keys' in data:
-                      for k in data['keys']:
-                          if k.get('length') == 32:
-                              print(k['hex'])
-                              break
-              except: pass
-              " 2>/dev/null)
-            fi
-            
+            # Try multiple patterns to find the key
+            FOUND_KEY=$(grep -oP 'AES-256 KEY CAPTURED' /tmp/frida-output.log | head -1)
             if [ -n "$FOUND_KEY" ]; then
-              echo "=========================================="
-              echo "  AES-256 KEY SUCCESSFULLY EXTRACTED!"
-              echo "=========================================="
-              echo "Key: $FOUND_KEY"
-              echo "=========================================="
-              echo "GAME_AES_KEY=$FOUND_KEY" >> $GITHUB_ENV
-              echo "KEY_FOUND=true" >> $GITHUB_ENV
-            else
-              echo "[!] No AES key was found in this extraction attempt."
-              echo "[!] This may require manual extraction on a real device."
-              echo ""
-              echo "To extract manually:"
-              echo "  1. Install Frida on your computer: pip install frida-tools"
-              echo "  2. Enable USB debugging on your Android phone"
-              echo "  3. Run: frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause"
-              echo "  4. Open a puzzle in the app to trigger decryption"
-              echo "  5. Copy the key from the output"
-              echo "  6. Add it as a GitHub Secret: GAME_AES_KEY"
-              echo "KEY_FOUND=false" >> $GITHUB_ENV
+              FOUND_KEY=$(grep -oP 'Key \(hex\): \K[a-f0-9]{64}' /tmp/frida-output.log | head -1)
             fi
+            if [ -z "$FOUND_KEY" ]; then
+              FOUND_KEY=$(grep -oP '"key_hex"\s*:\s*"\K[a-f0-9]{64}' /tmp/frida-output.log | head -1)
+            fi
+            if [ -z "$FOUND_KEY" ]; then
+              FOUND_KEY=$(grep -oP '\K[a-f0-9]{64}' /tmp/frida-output.log | head -1)
+            fi
+          fi
+
+          if [ -z "$FOUND_KEY" ] && [ -f /tmp/frida-result.json ]; then
+            FOUND_KEY=$(python3 -c "
+          import json
+          with open('/tmp/frida-result.json') as f:
+              d = json.load(f)
+          if 'key_hex' in d: print(d['key_hex'])
+          elif 'keys' in d:
+              for k in d['keys']:
+                  if k.get('length') == 32: print(k['hex']); break
+          " 2>/dev/null)
+          fi
+
+          if [ -n "$FOUND_KEY" ]; then
+            echo "GAME_AES_KEY=$FOUND_KEY" >> $GITHUB_ENV
+            echo "KEY_FOUND=true" >> $GITHUB_ENV
+            echo "=== KEY FOUND ==="
+            echo "$FOUND_KEY"
           else
-            echo "[!] No Frida output found"
             echo "KEY_FOUND=false" >> $GITHUB_ENV
+            echo "=== KEY NOT FOUND ==="
+            echo "The automated emulator extraction did not find the AES key."
+            echo "This is common — CodyCross uses IL2CPP which requires deeper analysis."
           fi
 
-      - name: Save key as GitHub Secret
+      - name: Save as GitHub Secret
         if: env.KEY_FOUND == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "[+] Saving GAME_AES_KEY as repository secret..."
-          
-          # Create a secret using the GitHub API
+          pip install pynacl -q
           REPO="${{ github.repository }}"
-          TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          KEY_VALUE="${GAME_AES_KEY}"
-          
-          # Use GitHub CLI if available
-          if command -v gh &> /dev/null; then
-            echo "$KEY_VALUE" | gh secret set GAME_AES_KEY --repo "$REPO"
-            echo "[+] Secret saved via GitHub CLI"
-          else
-            # Use GitHub API directly
-            PUB_KEY=$(curl -s -H "Authorization: token $TOKEN" \
-              "https://api.github.com/repos/$REPO/actions/secrets/public-key")
-            PUB_KEY_VAL=$(echo "$PUB_KEY" | python3 -c "import sys,json; print(json.load(sys.stdin)['key'])" 2>/dev/null)
-            PUB_KEY_ID=$(echo "$PUB_KEY" | python3 -c "import sys,json; print(json.load(sys.stdin)['key_id'])" 2>/dev/null)
-            
-            if [ -n "$PUB_KEY_VAL" ] && [ -n "$PUB_KEY_ID" ]; then
-              # Encrypt the secret using libsodium
-              ENCRYPTED=$(python3 << 'PYEOF'
-              import base64, json, sys
-              try:
-                  from nacl import encoding, public
-              except ImportError:
-                  import subprocess
-                  subprocess.check_call([sys.executable, "-m", "pip", "install", "pynacl", "-q"])
-                  from nacl import encoding, public
-              
-              pub_key_b64 = sys.argv[1]
-              secret = sys.argv[2]
-              
-              pub_key_bytes = base64.b64decode(pub_key_b64)
-              seal_box = public.SealedBox(public.PublicKey(pub_key_bytes))
-              encrypted = seal_box.encrypt(secret.encode())
-              print(base64.b64encode(encrypted).decode())
-              PYEOF
-              "$PUB_KEY_VAL" "$KEY_VALUE")
-              
-              curl -s -X PUT \
-                -H "Authorization: token $TOKEN" \
-                -H "Content-Type: application/json" \
-                "https://api.github.com/repos/$REPO/actions/secrets/GAME_AES_KEY" \
-                -d "{\"encrypted_value\":\"$ENCRYPTED\",\"key_id\":\"$PUB_KEY_ID\"}"
-              
-              echo "[+] Secret saved via GitHub API"
-            else
-              echo "[!] Could not save secret automatically. Please add it manually:"
-              echo "    Go to Settings > Secrets and variables > Actions"
-              echo "    Add secret: GAME_AES_KEY"
-              echo "    Value: $KEY_VALUE"
-            fi
-          fi
+          KEY="${GAME_AES_KEY}"
 
-      - name: Post extraction summary
+          # Get public key for encryption
+          PUB=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/actions/secrets/public-key")
+          PK_VAL=$(echo "$PUB" | python3 -c "import sys,json;print(json.load(sys.stdin)['key'])")
+          PK_ID=$(echo "$PUB" | python3 -c "import sys,json;print(json.load(sys.stdin)['key_id'])")
+
+          # Encrypt with libsodium
+          ENCRYPTED=$(python3 -c "
+          import base64, sys
+          from nacl import public
+          pk_bytes = base64.b64decode('$PK_VAL')
+          box = public.SealedBox(public.PublicKey(pk_bytes))
+          enc = box.encrypt('$KEY'.encode())
+          print(base64.b64encode(enc).decode())
+          ")
+
+          curl -s -X PUT \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/$REPO/actions/secrets/GAME_AES_KEY" \
+            -d "{\"encrypted_value\":\"$ENCRYPTED\",\"key_id\":\"$PK_ID\"}"
+          echo "Secret saved!"
+
+      - name: Summary
         if: always()
         run: |
-          echo ""
-          echo "=========================================="
-          echo "  EXTRACTION SUMMARY"
           echo "=========================================="
           if [ "$KEY_FOUND" = "true" ]; then
-            echo "STATUS: SUCCESS"
-            echo "The AES-256 key has been extracted and saved"
-            echo "as the GAME_AES_KEY repository secret."
-            echo ""
-            echo "The daily-extract workflow will now use this key"
-            echo "to automatically fetch and decrypt puzzle answers."
+            echo "  SUCCESS! AES key extracted and saved."
+            echo "  The daily workflow will now auto-decrypt."
           else
-            echo "STATUS: KEY NOT FOUND (this is expected)"
-            echo ""
-            echo "The emulator-based extraction is a best-effort approach."
-            echo "CodyCross may require a real device or specific app version."
-            echo ""
-            echo "ALTERNATIVE METHODS:"
-            echo ""
-            echo "1. Manual Frida extraction (recommended):"
-            echo "   pip install frida-tools"
-            echo "   frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause"
-            echo "   Then add the captured key as GAME_AES_KEY secret"
-            echo ""
-            echo "2. Static binary analysis:"
-            echo "   Use Il2CppDumper + Ghidra to find the key in libil2cpp.so"
-            echo "   Search for PuzzleCrypto class initialization"
-            echo ""
-            echo "3. APK analysis tool:"
-            echo "   Run scripts/emulator-extract.sh on a local machine"
-            echo "   with an Android emulator and the CodyCross APK"
+            echo "  Key not found via emulator."
+            echo "  Try manual extraction on a real Android device:"
+            echo "    pip install frida-tools"
+            echo "    frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause"
+            echo "  Then add the key as GAME_AES_KEY secret."
           fi
           echo "=========================================="
