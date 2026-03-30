@@ -61,14 +61,12 @@ jobs:
 
       - name: Prepare APK and Frida server
         run: |
-          mkdir -p /tmp/cxapk
-          cd /tmp/cxapk && unzip -o /tmp/codycross.apks 2>/dev/null || true
-          ls -la /tmp/cxapk/
+          mkdir -p /tmp/cxapk && cd /tmp/cxapk && unzip -o /tmp/codycross.apks 2>/dev/null || true
           FV=$(frida --version 2>/dev/null | head -1)
           echo "FV=$FV" >> $GITHUB_ENV
           echo "Downloading frida-server $FV for x86..."
           curl -L -o /tmp/fs.xz "https://github.com/frida/frida/releases/download/${FV}/frida-server-${FV}-android-x86.xz"
-          xz -d -f /tmp/fs.xz 2>/dev/null
+          xz -d /tmp/fs.xz && mv /tmp/fs /tmp/frida-server
           chmod +x /tmp/frida-server
           ls -la /tmp/frida-server
 
