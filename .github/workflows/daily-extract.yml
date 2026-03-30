@@ -2,8 +2,8 @@ name: Daily Extract Answers
 
 on:
   schedule:
-    # Run every day at 05:00 UTC (after new puzzle is released)
-    - cron: '0 5 * * *'
+    # Run daily at 06:00 UTC (after new puzzle releases at ~05:00 UTC)
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       mundo:
@@ -20,9 +20,6 @@ jobs:
       pages: write
       id-token: write
 
-    env:
-      GAME_AES_KEY: ${{ secrets.GAME_AES_KEY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,28 +31,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install pycryptodome requests
-
-      - name: Fetch and decrypt puzzle answers
-        env:
-          GAME_AES_KEY: ${{ secrets.GAME_AES_KEY }}
+      - name: Fetch crossword answers
         run: |
           echo "=========================================="
-          echo "  Daily CodyCross Answer Extraction"
+          echo "  CodyCross Daily Answer Extraction"
           echo "  Date: $(date +%Y-%m-%d)"
+          echo "  Endpoint: Crossword/TodaysCrossword"
+          echo "  Encryption: None (unencrypted API)"
           echo "=========================================="
-          
-          # Check if we have an AES key
-          if [ -n "$GAME_AES_KEY" ]; then
-            echo "[+] AES key is available (${#GAME_AES_KEY} hex chars)"
-          else
-            echo "[!] No GAME_AES_KEY secret set"
-            echo "[!] Run the 'Extract AES Key' workflow first"
-            echo "[!] Continuing in data-check mode..."
-          fi
-          
-          # Fetch answers (with or without key)
+
           if [ -n "${{ github.event.inputs.mundo }}" ]; then
             python3 fetcher/fetch_answers.py --mundo "${{ github.event.inputs.mundo }}"
           else
@@ -71,7 +55,6 @@ jobs:
           else
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "[+] New puzzle data detected!"
-            # Show what changed
             git diff --stat data/answers.json
           fi
 
