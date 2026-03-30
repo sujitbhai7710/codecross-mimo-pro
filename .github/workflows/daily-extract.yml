@@ -1,0 +1,120 @@
+name: Daily Extract Answers
+
+on:
+  schedule:
+    # Run every day at 05:00 UTC (after new puzzle is released)
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      mundo:
+        description: 'World number to fetch (default: auto)'
+        required: false
+        default: ''
+
+jobs:
+  extract-answers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    env:
+      GAME_AES_KEY: ${{ secrets.GAME_AES_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pycryptodome requests
+
+      - name: Fetch and decrypt puzzle answers
+        env:
+          GAME_AES_KEY: ${{ secrets.GAME_AES_KEY }}
+        run: |
+          echo "=========================================="
+          echo "  Daily CodyCross Answer Extraction"
+          echo "  Date: $(date +%Y-%m-%d)"
+          echo "=========================================="
+          
+          # Check if we have an AES key
+          if [ -n "$GAME_AES_KEY" ]; then
+            echo "[+] AES key is available (${#GAME_AES_KEY} hex chars)"
+          else
+            echo "[!] No GAME_AES_KEY secret set"
+            echo "[!] Run the 'Extract AES Key' workflow first"
+            echo "[!] Continuing in data-check mode..."
+          fi
+          
+          # Fetch answers (with or without key)
+          if [ -n "${{ github.event.inputs.mundo }}" ]; then
+            python3 fetcher/fetch_answers.py --mundo "${{ github.event.inputs.mundo }}"
+          else
+            python3 fetcher/fetch_answers.py
+          fi
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet data/answers.json 2>/dev/null; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "[*] No new data to commit"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "[+] New puzzle data detected!"
+            # Show what changed
+            git diff --stat data/answers.json
+          fi
+
+      - name: Commit and push updates
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "CodeCross Bot"
+          git config user.email "bot@codecross-daily.com"
+          git add data/
+          git commit -m "Auto-update answers $(date +%Y-%m-%d)"
+          git push
+
+  deploy:
+    needs: extract-answers
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          exclude: |
+            fetcher/**
+            scripts/**
+            .github/**
+            *.py
+            ANALYSIS.md
+            REPORT.md
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
