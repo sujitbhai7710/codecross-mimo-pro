@@ -30,7 +30,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-api-29-x86-v4
+          key: avd-api-29-x86-v5
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -47,16 +47,24 @@ jobs:
           disable-animations: true
           script: echo "AVD ready"
 
-      - name: Install Frida + download APK + Frida server
+      - name: Download Frida + APK + Frida server
         run: |
           pip install frida-tools 2>&1 | tail -3
-          echo "FV=$(frida --version 2>/dev/null | head -1)" >> $GITHUB_ENV
-          curl -L -o /tmp/codycross.apks "https://dl.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" || true
-          curl -L -o /tmp/fs.xz "https://github.com/frida/frida/releases/download/${{ env.FV }}/frida-server-${{ env.FV }}-android-x86.xz"
+          FV=$(frida --version 2>/dev/null | head -1)
+          echo "FV=${FV}" >> $GITHUB_ENV
+          echo "Downloading CodyCross APK..."
+          curl -L --connect-timeout 30 --max-time 120 -o /tmp/codycross.apks \
+            "https://d.apkpure.net/b/APK/com.fanatee.cody?version=latest" || \
+          curl -L --connect-timeout 30 --max-time 120 -o /tmp/codycross.apks \
+            "https://static.apkcombo.com/apk/2/com.fanatee.cody/405.674140609cedc1410daf86fa84804edfbf1d4104.apks" || true
+          ls -lh /tmp/codycross.apks 2>/dev/null || echo "APK download failed"
+          echo "Downloading frida-server $FV..."
+          curl -L -o /tmp/fs.xz "https://github.com/frida/frida/releases/download/${FV}/frida-server-${FV}-android-x86.xz"
           xz -d /tmp/fs.xz && mv /tmp/fs /tmp/frida-server && chmod +x /tmp/frida-server
-          ls -la /tmp/frida-server /tmp/codycross.apks
+          ls -la /tmp/frida-server 2>/dev/null || echo "frida-server download failed"
 
       - name: Run Frida extraction on emulator
+        if: success()
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -66,8 +74,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            mkdir -p /tmp/cxapk
-            unzip -o /tmp/codycross.apks -d /tmp/cxapk
+            mkdir -p /tmp/cxapk && unzip -o /tmp/codycross.apks -d /tmp/cxapk
             adb install -r -t /tmp/cxapk/com.fanatee.cody.apk 2>&1 || true
             adb install -r -t /tmp/cxapk/config.armeabi_v7a.apk 2>&1 || true
             adb push /tmp/frida-server /data/local/tmp/frida-server
