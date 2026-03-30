@@ -3,15 +3,19 @@
 CodyCross Daily Answer Fetcher
 ===============================
 Automatically fetches puzzle data from the CodyCross API,
-decrypts it, and updates the website data files.
+decrypts it using the AES-256 key, and updates the website data files.
 
-Data Source: CodyCross dev API (codydev.fulano.com.br)
-Encryption: AES-256-CBC (key embedded in app binary)
+Data Source: CodyCross API (codydev.fulano.com.br, game.codycross-game.com)
+Encryption: AES-256-CBC (key extracted via Frida from app binary)
 
 Usage:
-    python3 fetch_answers.py              # Fetch today's answers
-    python3 fetch_answers.py --mundo 1    # Fetch specific world
-    python3 fetch_answers.py --all        # Fetch all available worlds
+    python3 fetch_answers.py                    # Fetch today's answers (needs GAME_AES_KEY env)
+    python3 fetch_answers.py --mundo 1          # Fetch specific world
+    python3 fetch_answers.py --demo             # Demo mode with sample data
+    GAME_AES_KEY=<hex> python3 fetch_answers.py # With explicit key
+
+Environment Variables:
+    GAME_AES_KEY  - Hex-encoded AES-256 key (32 bytes = 64 hex chars)
 """
 
 import json
@@ -27,7 +31,11 @@ from datetime import datetime, timezone, timedelta
 # CONFIGURATION
 # ============================================================
 
-API_BASE = "https://codydev.fulano.com.br"
+# Dev API (still active)
+DEV_API_BASE = "https://codydev.fulano.com.br"
+# Production API
+PROD_API_BASE = "https://game.codycross-game.com"
+
 TOKEN = "872fbb4c-fa3c-4534-b6e4-4b56bd7d3fc6"
 LANG = "1aca585a-8e15-3029-89a0-54aa078acec2"  # English
 COUNTRY = "US"
@@ -38,38 +46,45 @@ DIFFICULTY = 2  # Normal difficulty
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 ANSWERS_FILE = os.path.join(DATA_DIR, "answers.json")
 
+def get_aes_key():
+    """Get the AES key from environment variable."""
+    key_hex = os.environ.get("GAME_AES_KEY", "")
+    if not key_hex:
+        return None
+    # Clean the key (remove spaces, ensure lowercase)
+    key_hex = key_hex.strip().lower().replace(" ", "")
+    if len(key_hex) != 64:
+        print(f"  [!] Invalid key length: {len(key_hex)} hex chars (expected 64)")
+        return None
+    try:
+        return bytes.fromhex(key_hex)
+    except ValueError:
+        print(f"  [!] Invalid hex key")
+        return None
+
+
 # ============================================================
 # API COMMUNICATION
 # ============================================================
 
-def build_url(endpoint, params=None):
-    """Build API URL with common parameters."""
-    base_params = {
-        "androidLang": "en",
-        "deviceType": DEVICE_TYPE,
-        "appVersion": APP_VERSION,
-    }
-    if params:
-        base_params.update(params)
-    
-    query = "&".join(f"{k}={v}" for k, v in base_params.items())
-    return f"{API_BASE}/{endpoint}?{query}"
-
-
-def api_get(url):
+def api_get(url, extra_headers=None):
     """Make GET request to API and return parsed JSON."""
+    headers = {
+        "User-Agent": "CodyCross/2.8.1 (Android 12; SDK 31)",
+        "Accept": "application/json",
+        "Accept-Language": "en-US",
+    }
+    if extra_headers:
+        headers.update(extra_headers)
+    
     try:
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "CodyCross/2.8.1 (Android)",
-            "Accept": "application/json",
-        })
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            if data.get("Ok"):
-                return data
-            else:
-                print(f"  API returned Ok=false: {data.get('Message', 'unknown error')}")
-                return None
+            return data
+    except urllib.error.HTTPError as e:
+        print(f"  HTTP {e.code}: {e.reason}")
+        return None
     except urllib.error.URLError as e:
         print(f"  Network error: {e}")
         return None
@@ -80,316 +95,491 @@ def api_get(url):
 
 def fetch_text_list():
     """Fetch UI text/localization strings (unencrypted)."""
-    url = build_url("Texto/List")
+    url = f"{DEV_API_BASE}/Texto/List?androidLang=en&deviceType={DEVICE_TYPE}&appVersion={APP_VERSION}"
     return api_get(url)
 
 
-def fetch_puzzle_world(mundo_num, difficulty=DIFFICULTY):
+def fetch_puzzle_world(mundo_num, api_base=None):
     """
     Fetch puzzle data for a specific world.
-    Returns encrypted records - needs decryption.
+    Returns encrypted records that need AES-256-CBC decryption.
     """
+    base = api_base or DEV_API_BASE
     params = {
         "token": TOKEN,
         "lang": LANG,
         "mundo": str(mundo_num),
         "country": COUNTRY,
-        "dificuldadeDoPuzzle": str(difficulty),
+        "dificuldadeDoPuzzle": str(DIFFICULTY),
+        "androidLang": "en",
+        "deviceType": DEVICE_TYPE,
+        "appVersion": APP_VERSION,
     }
-    url = build_url("Puzzle/GetMundo", params)
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    url = f"{base}/Puzzle/GetMundo?{query}"
+    print(f"  URL: {url}")
     return api_get(url)
+
+
+def fetch_todays_crossword():
+    """Try fetching today's crossword from production API."""
+    # Today's crossword endpoint (needs auth token from player login)
+    url = f"{PROD_API_BASE}/Crossword/TodaysCrossword?token={TOKEN}&lang={LANG}"
+    return api_get(url)
+
+
+def fetch_daily_puzzle():
+    """Try DDR daily puzzle endpoint."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    url = f"{PROD_API_BASE}/DDR/Daily/Date({today})?token={TOKEN}&lang={LANG}"
+    return api_get(url)
+
+
+def login_device():
+    """Login with a fake device to get an auth token."""
+    login_data = json.dumps({
+        "deviceId": "ci-" + hashlib.md5(os.urandom(16)).hexdigest()[:16],
+        "deviceType": DEVICE_TYPE,
+        "appVersion": APP_VERSION,
+        "platform": "android",
+        "country": COUNTRY,
+        "language": LANG,
+    }).encode()
+
+    url = f"{PROD_API_BASE}/Player/login"
+    try:
+        req = urllib.request.Request(url, data=login_data, headers={
+            "Content-Type": "application/json",
+            "User-Agent": "CodyCross/2.8.1 (Android 12; SDK 31)",
+        })
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"  Login failed: {e}")
+        return None
 
 
 # ============================================================
 # DECRYPTION
 # ============================================================
 
-def try_decrypt_aes(encrypted_bytes, key_hex=None):
+def decrypt_aes_cbc(encrypted_bytes, key):
     """
-    Attempt AES-256-CBC decryption.
-    
-    The CodyCross app uses AES encryption for puzzle data.
-    The key is embedded in the app's native binary (libil2cpp.so).
-    
-    This function tries known/common keys. For full decryption,
-    the AES key needs to be extracted from the binary using
-    tools like Il2CppDumper + Ghidra/IDA Pro.
+    Decrypt AES-256-CBC data.
+    Format: [16 bytes IV][ciphertext][PKCS7 padding]
     """
     try:
         from Crypto.Cipher import AES
-        HAS_CRYPTO = True
     except ImportError:
         try:
-            # Try with pycryptodome
             from Cryptodome.Cipher import AES
-            HAS_CRYPTO = True
         except ImportError:
-            HAS_CRYPTO = False
+            print("  [!] pycryptodome not installed. Run: pip3 install pycryptodome")
+            return None
     
-    if not HAS_CRYPTO:
-        print("  [!] pycryptodome not installed. Run: pip3 install pycryptodome")
+    if len(encrypted_bytes) < 32:
+        print(f"  [!] Data too short: {len(encrypted_bytes)} bytes")
         return None
     
-    # Common key derivation attempts
-    # In the app, the key is likely derived from a string constant
-    possible_keys = []
+    iv = encrypted_bytes[:16]
+    ciphertext = encrypted_bytes[16:]
     
-    if key_hex:
-        possible_keys.append(bytes.fromhex(key_hex))
-    
-    # Try key derivation from known app strings
-    key_strings = [
-        "fanatee_codycross_key",
-        "codycross_puzzle_key", 
-        "fanatee_secret_key",
-        "codycross_secret",
-        "com.fanatee.cody",
-    ]
-    
-    for ks in key_strings:
-        # SHA-256 hash of string = 32 bytes = AES-256 key
-        key = hashlib.sha256(ks.encode()).digest()
-        possible_keys.append(key)
-    
-    # The IV is typically the first 16 bytes of the encrypted data
-    if len(encrypted_bytes) > 16:
-        iv = encrypted_bytes[:16]
-        ciphertext = encrypted_bytes[16:]
-    else:
+    try:
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        decrypted = cipher.decrypt(ciphertext)
+        
+        # Remove PKCS7 padding
+        pad_len = decrypted[-1]
+        if 1 <= pad_len <= 16 and all(b == pad_len for b in decrypted[-pad_len:]):
+            decrypted = decrypted[:-pad_len]
+        
+        return decrypted
+    except Exception as e:
+        print(f"  [!] Decryption error: {e}")
         return None
-    
-    for key in possible_keys:
-        try:
-            cipher = AES.new(key, AES.MODE_CBC, iv)
-            decrypted = cipher.decrypt(ciphertext)
-            
-            # Check if decryption produced valid data
-            # Remove PKCS7 padding
-            pad_len = decrypted[-1]
-            if 1 <= pad_len <= 16:
-                decrypted = decrypted[:-pad_len]
-            
-            # Check if result looks like valid text/JSON
-            try:
-                text = decrypted.decode("utf-8", errors="strict")
-                if text.startswith("{") or text.startswith("[") or "puzzle" in text.lower():
-                    print(f"  [+] Decryption successful!")
-                    return text
-            except UnicodeDecodeError:
-                # Try as binary protobuf or other format
-                if b"puzzle" in decrypted.lower() or b"answer" in decrypted.lower():
-                    print(f"  [+] Decryption produced binary data with puzzle content")
-                    return decrypted
-        except Exception:
-            continue
-    
-    return None
 
 
-def decrypt_puzzle_data(encrypted_records):
-    """
-    Attempt to decrypt puzzle data from API response.
-    
-    The API returns 2 records:
-    - Record 0: Small (~7KB) - likely metadata/config, AES encrypted
-    - Record 1: Large (~312KB) - puzzle content, AES encrypted
-    
-    Both use the same key derived from the app binary.
-    """
-    results = []
-    
-    for i, record in enumerate(encrypted_records):
-        # Decode base64
-        b64_clean = record.replace("\\u002B", "+")
+def try_decrypt_with_key(encrypted_b64, key):
+    """Decrypt a base64-encoded encrypted record."""
+    try:
+        b64_clean = encrypted_b64.replace("\\u002B", "+")
         encrypted_bytes = base64.b64decode(b64_clean)
-        
-        print(f"  Record {i}: {len(encrypted_bytes)} bytes (AES-{len(encrypted_bytes)//16} blocks)")
-        
-        # Try decryption
-        decrypted = try_decrypt_aes(encrypted_bytes)
+        decrypted = decrypt_aes_cbc(encrypted_bytes, key)
         
         if decrypted:
-            results.append(decrypted)
-            if isinstance(decrypted, str):
-                print(f"  Record {i}: Decrypted to {len(decrypted)} chars")
-            else:
-                print(f"  Record {i}: Decrypted to {len(decrypted)} bytes")
-        else:
-            print(f"  Record {i}: Could not decrypt (key not found in binary)")
-            # Save encrypted data for manual analysis
-            raw_path = os.path.join(DATA_DIR, f"encrypted_record_{i}.bin")
-            with open(raw_path, "wb") as f:
-                f.write(encrypted_bytes)
-            print(f"  Record {i}: Saved encrypted data to {raw_path}")
-            results.append(None)
-    
-    return results
+            try:
+                text = decrypted.decode("utf-8")
+                return text
+            except UnicodeDecodeError:
+                return None
+        return None
+    except Exception as e:
+        print(f"  [!] Decrypt failed: {e}")
+        return None
 
 
 # ============================================================
 # DATA PROCESSING
 # ============================================================
 
-def parse_puzzle_data(decrypted_json):
+def parse_decrypted_puzzle(json_str):
     """
-    Parse decrypted puzzle JSON into our answer format.
+    Parse decrypted puzzle data into our answer format.
     
-    Expected format (inferred from app structure):
-    {
-        "world": 1,
-        "groups": [
-            {
-                "name": "Group 1",
-                "puzzles": [
-                    {"clue": "...", "answer": "..."},
-                    ...
-                ]
-            },
-            ...
-        ]
-    }
+    The exact structure depends on the decrypted JSON format.
+    We try multiple known formats.
     """
     try:
-        data = json.loads(decrypted_json) if isinstance(decrypted_json, str) else decrypted_json
-        
-        # The exact structure depends on the decrypted format
-        # This will need adjustment once we can decrypt
-        puzzles = []
-        
-        if "Records" in data:
-            for record in data["Records"]:
-                if isinstance(record, dict):
-                    for key, val in record.items():
-                        if isinstance(val, list):
-                            for item in val:
-                                if isinstance(item, dict) and "clue" in item and "answer" in item:
-                                    puzzles.append(item)
-        
-        return puzzles
-    except (json.JSONDecodeError, TypeError):
-        return []
-
-
-def update_answers_file(world_num, theme, groups):
-    """Update the answers.json file with new puzzle data."""
-    os.makedirs(DATA_DIR, exist_ok=True)
+        data = json.loads(json_str)
+    except json.JSONDecodeError:
+        return None
     
-    # Load existing data
+    groups = []
+    theme = "Unknown"
+    world = 1
+    
+    # Format 1: { "groups": [{ "name": "...", "puzzles": [{ "clue": "...", "answer": "..." }] }] }
+    if "groups" in data:
+        groups = []
+        for g in data["groups"]:
+            name = g.get("name", g.get("groupName", g.get("title", f"Group {len(groups)+1}")))
+            puzzles = []
+            for p in g.get("puzzles", g.get("questions", g.get("items", []))):
+                clue = p.get("clue", p.get("question", p.get("text", p.get("definition", ""))))
+                answer = p.get("answer", p.get("solution", p.get("word", p.get("value", ""))))
+                if clue and answer:
+                    puzzles.append({"clue": clue, "answer": answer})
+            if puzzles:
+                groups.append({"name": name, "puzzles": puzzles})
+        theme = data.get("theme", data.get("worldName", data.get("title", "Unknown")))
+        world = data.get("world", data.get("worldNumber", data.get("mundo", 1)))
+    
+    # Format 2: { "Records": [...] }  where each record has puzzle data
+    elif "Records" in data:
+        for rec in data["Records"]:
+            if isinstance(rec, dict):
+                # Recurse into each record
+                result = parse_decrypted_puzzle(json.dumps(rec))
+                if result and result["groups"]:
+                    groups.extend(result["groups"])
+    
+    # Format 3: Array of puzzle items
+    elif isinstance(data, list):
+        puzzles = []
+        for item in data:
+            if isinstance(item, dict):
+                clue = item.get("clue", item.get("question", item.get("definition", "")))
+                answer = item.get("answer", item.get("solution", item.get("word", "")))
+                group = item.get("group", item.get("groupName", "Main"))
+                if clue and answer:
+                    puzzles.append({"clue": clue, "answer": answer})
+        if puzzles:
+            groups.append({"name": "All Puzzles", "puzzles": puzzles})
+    
+    # Format 4: Direct puzzle fields
+    else:
+        # Try to find any clues and answers at any nesting level
+        def extract_recursive(obj, depth=0):
+            if depth > 10:
+                return [], ""
+            found_puzzles = []
+            found_theme = ""
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    if k.lower() in ("clue", "question", "definition", "description"):
+                        if "answer" in obj or "solution" in obj or "word" in obj:
+                            ans = obj.get("answer", obj.get("solution", obj.get("word", "")))
+                            found_puzzles.append({"clue": str(v), "answer": str(ans)})
+                    elif k.lower() in ("theme", "title", "worldname", "name") and isinstance(v, str):
+                        found_theme = v
+                    elif isinstance(v, (dict, list)):
+                        sub_puzzles, sub_theme = extract_recursive(v, depth+1)
+                        found_puzzles.extend(sub_puzzles)
+                        if sub_theme and not found_theme:
+                            found_theme = sub_theme
+            elif isinstance(obj, list):
+                for item in obj:
+                    sub_puzzles, sub_theme = extract_recursive(item, depth+1)
+                    found_puzzles.extend(sub_puzzles)
+                    if sub_theme and not found_theme:
+                        found_theme = sub_theme
+            return found_puzzles, found_theme
+        
+        puzzles, theme = extract_recursive(data)
+        if puzzles:
+            groups.append({"name": "Puzzles", "puzzles": puzzles})
+    
+    return {"theme": theme, "world": world, "groups": groups}
+
+
+# ============================================================
+# ANSWERS FILE MANAGEMENT
+# ============================================================
+
+def load_answers():
+    """Load existing answers.json."""
     if os.path.exists(ANSWERS_FILE):
         with open(ANSWERS_FILE, "r") as f:
-            data = json.load(f)
-    else:
-        data = {
-            "site": {
-                "name": "CodeCross Daily Answers",
-                "description": "Daily puzzle answers updated automatically",
-                "lastUpdated": datetime.now().strftime("%Y-%m-%d"),
-                "dataSource": "CodyCross API (codydev.fulano.com.br)",
-                "encryption": "AES-256-CBC",
-                "apiEndpoint": f"{API_BASE}/Puzzle/GetMundo"
-            },
-            "answers": []
-        }
-    
-    # Create today's entry
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    
-    entry = {
-        "date": today_str,
-        "theme": theme or f"World {world_num}",
-        "world": world_num,
-        "groups": groups
+            return json.load(f)
+    return {
+        "site": {
+            "name": "CodeCross Daily Answers",
+            "description": "Daily puzzle answers fetched automatically from CodyCross API",
+            "lastUpdated": datetime.now().strftime("%Y-%m-%d"),
+            "dataSource": "CodyCross API",
+            "encryption": "AES-256-CBC",
+            "apiEndpoint": DEV_API_BASE,
+            "updateMethod": "GitHub Actions (automated daily fetch + decrypt)"
+        },
+        "answers": []
     }
+
+
+def save_answer_entry(entry):
+    """Add an answer entry to answers.json."""
+    data = load_answers()
     
-    # Remove existing entry for today if present
+    today_str = entry["date"]
+    
+    # Remove existing entry for same date
     data["answers"] = [a for a in data.get("answers", []) if a.get("date") != today_str]
     
     # Add new entry at the beginning
     data["answers"].insert(0, entry)
     data["site"]["lastUpdated"] = today_str
     
-    # Save
+    os.makedirs(DATA_DIR, exist_ok=True)
     with open(ANSWERS_FILE, "w") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     
-    print(f"\n  [+] Updated {ANSWERS_FILE}")
-    print(f"  [+] Date: {today_str}, World: {world_num}, Groups: {len(groups)}")
+    print(f"  [+] Updated {ANSWERS_FILE}")
+    print(f"  [+] Date: {today_str}, Theme: {entry.get('theme', 'N/A')}, Groups: {len(entry.get('groups', []))}")
 
 
 # ============================================================
-# MAIN
+# MAIN PIPELINE
 # ============================================================
+
+def fetch_and_decrypt(mundo_num=1, aes_key=None):
+    """Fetch puzzle data from API and decrypt with AES key."""
+    
+    print(f"\n[*] Fetching puzzle data for world {mundo_num}...")
+    response = fetch_puzzle_world(mundo_num)
+    
+    if not response:
+        print("  [!] Failed to fetch from dev API")
+        return None
+    
+    records = response.get("Records", [])
+    if not records:
+        # Check for direct data
+        if response.get("Ok"):
+            print("  [+] API responded Ok=true but no Records field")
+            print(f"  [+] Keys: {list(response.keys())}")
+            # Try to use the whole response as data
+            records = [json.dumps(response)]
+        else:
+            print("  [!] No records in response")
+            return None
+    
+    print(f"  [+] Got {len(records)} record(s)")
+    
+    if not aes_key:
+        print("  [!] No AES key available — cannot decrypt")
+        print("  [!] Save encrypted data for later decryption")
+        
+        for i, record in enumerate(records):
+            if isinstance(record, str) and len(record) > 50:
+                b64_clean = record.replace("\\u002B", "+")
+                encrypted_bytes = base64.b64decode(b64_clean)
+                raw_path = os.path.join(DATA_DIR, f"encrypted_record_{i}.bin")
+                with open(raw_path, "wb") as f:
+                    f.write(encrypted_bytes)
+                print(f"  [+] Saved encrypted record {i} ({len(encrypted_bytes)} bytes) to {raw_path}")
+        
+        return None
+    
+    # Decrypt each record
+    print(f"\n[*] Decrypting with AES-256-CBC key...")
+    
+    decrypted_records = []
+    for i, record in enumerate(records):
+        if not isinstance(record, str):
+            print(f"  Record {i}: Not a string, skipping")
+            continue
+        
+        text = try_decrypt_with_key(record, aes_key)
+        if text:
+            print(f"  Record {i}: Decrypted to {len(text)} chars")
+            decrypted_records.append(text)
+            
+            # Save decrypted data
+            os.makedirs(DATA_DIR, exist_ok=True)
+            dec_path = os.path.join(DATA_DIR, f"decrypted_record_{i}.json")
+            try:
+                parsed = json.loads(text)
+                with open(dec_path, "w") as f:
+                    json.dump(parsed, f, indent=2, ensure_ascii=False)
+            except json.JSONDecodeError:
+                with open(dec_path, "w") as f:
+                    f.write(text)
+        else:
+            print(f"  Record {i}: Decryption failed (wrong key?)")
+    
+    return decrypted_records
+
+
+def run_demo_mode():
+    """Generate demo data to show the website works."""
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    
+    # Sample puzzle data (realistic structure)
+    entry = {
+        "date": today_str,
+        "theme": "Demo — Awaiting AES Key Extraction",
+        "world": 1,
+        "groups": [
+            {
+                "name": "Getting Started",
+                "puzzles": [
+                    {"clue": "This website auto-updates daily with puzzle answers", "answer": "AUTO UPDATE"},
+                    {"clue": "The encryption used by CodyCross API", "answer": "AES 256 CBC"},
+                ]
+            },
+            {
+                "name": "Next Steps",
+                "puzzles": [
+                    {"clue": "Run the Frida Key Extraction workflow once", "answer": "EXTRACT KEY"},
+                    {"clue": "Add the key as a GitHub Secret called", "answer": "GAME AES KEY"},
+                    {"clue": "This workflow will then auto-fetch daily", "answer": "DAILY EXTRACT"},
+                ]
+            }
+        ]
+    }
+    
+    save_answer_entry(entry)
+    print("\n  [+] Demo data written — website will show sample answers")
+    return True
+
 
 def main():
     print("=" * 60)
-    print("  CodyCross Daily Answer Fetcher")
-    print("  Data Source: codydev.fulano.com.br API")
+    print("  CodyCross Daily Answer Fetcher v2.0")
+    print("  Data Source: CodyCross API")
     print("=" * 60)
     
+    # Parse arguments
     mundo = 1
-    if "--mundo" in sys.argv:
-        idx = sys.argv.index("--mundo")
-        if idx + 1 < len(sys.argv):
-            mundo = int(sys.argv[idx + 1])
+    demo = False
     
-    # Step 1: Fetch puzzle data from API
-    print(f"\n[1] Fetching puzzle data for world {mundo}...")
-    response = fetch_puzzle_world(mundo)
+    for arg in sys.argv[1:]:
+        if arg == "--mundo":
+            idx = sys.argv.index("--mundo")
+            if idx + 1 < len(sys.argv):
+                mundo = int(sys.argv[idx + 1])
+        elif arg == "--demo":
+            demo = True
     
-    if not response:
-        print("  [!] Failed to fetch data from API")
-        return 1
+    aes_key = get_aes_key()
     
-    records = response.get("Records", [])
-    print(f"  [+] Got {len(records)} encrypted records")
+    if aes_key:
+        print(f"\n[+] AES key loaded: {aes_key.hex()[:16]}... ({len(aes_key)} bytes)")
+    else:
+        print("\n[!] No GAME_AES_KEY environment variable set")
+        print("[!] Decryption will not work until the key is extracted")
     
-    # Step 2: Attempt decryption
-    print(f"\n[2] Attempting decryption...")
-    decrypted = decrypt_puzzle_data(records)
+    if demo:
+        print("\n[!] Running in DEMO mode")
+        return run_demo_mode()
     
-    # Step 3: Process results
-    print(f"\n[3] Processing results...")
-    
+    # Try multiple worlds to find the daily puzzle
+    today_str = datetime.now().strftime("%Y-%m-%d")
     success = False
-    for i, dec in enumerate(decrypted):
-        if dec:
-            if isinstance(dec, str):
-                # Try to parse as JSON
-                try:
-                    parsed = json.loads(dec)
-                    print(f"  Record {i}: Valid JSON with {len(parsed)} top-level keys")
-                    
-                    # Save decrypted data
-                    dec_path = os.path.join(DATA_DIR, f"decrypted_record_{i}.json")
-                    with open(dec_path, "w") as f:
-                        json.dump(parsed, f, indent=2, ensure_ascii=False)
-                    print(f"  Saved to {dec_path}")
-                    success = True
-                except json.JSONDecodeError:
-                    print(f"  Record {i}: Not JSON, saving as text")
-                    dec_path = os.path.join(DATA_DIR, f"decrypted_record_{i}.txt")
-                    with open(dec_path, "w") as f:
-                        f.write(dec)
-                    success = True
     
+    # Calculate which world corresponds to today
+    # CodyCross releases daily puzzles cycling through worlds
+    day_of_year = (datetime.now() - datetime(datetime.now().year, 1, 1)).days
+    
+    # Try the dev API with a few world numbers
+    worlds_to_try = [mundo, 7, 15, 20]
+    if mundo == 1:
+        worlds_to_try = [1, 7, 15, 20, 30]
+    
+    for w in worlds_to_try:
+        print(f"\n{'─' * 40}")
+        print(f"[*] Trying world {w}...")
+        
+        decrypted = fetch_and_decrypt(w, aes_key)
+        
+        if decrypted:
+            # Parse the first record that looks like puzzle data
+            for text in decrypted:
+                parsed = parse_decrypted_puzzle(text)
+                if parsed and parsed.get("groups"):
+                    entry = {
+                        "date": today_str,
+                        "theme": parsed["theme"],
+                        "world": w,
+                        "groups": parsed["groups"]
+                    }
+                    save_answer_entry(entry)
+                    success = True
+                    break
+        
+        if success:
+            break
+    
+    # Also try production API endpoints
     if not success:
-        print("\n  [!] Decryption failed - AES key not extracted from binary yet.")
-        print("  [!] To extract the key, you need:")
-        print("      1. Il2CppDumper to extract metadata from libil2cpp.so")
-        print("      2. Ghidra/IDA Pro to find the key in the binary")
-        print("      3. Or use Frida to hook decryption at runtime")
-        print("\n  [i] Encrypted data saved for offline analysis.")
-        print("  [i] The website framework is ready - just needs the key!")
+        print(f"\n[*] Trying production API endpoints...")
+        
+        for endpoint_name, fetch_fn in [
+            ("Today's Crossword", fetch_todays_crossword),
+            ("Daily Puzzle", fetch_daily_puzzle),
+        ]:
+            print(f"\n  [{endpoint_name}]")
+            resp = fetch_fn()
+            if resp:
+                print(f"  [+] Got response: {list(resp.keys()) if isinstance(resp, dict) else type(resp)}")
+                if aes_key and isinstance(resp, dict):
+                    records = resp.get("Records", resp.get("records", []))
+                    if records:
+                        for record in records:
+                            if isinstance(record, str) and aes_key:
+                                text = try_decrypt_with_key(record, aes_key)
+                                if text:
+                                    parsed = parse_decrypted_puzzle(text)
+                                    if parsed and parsed.get("groups"):
+                                        entry = {
+                                            "date": today_str,
+                                            "theme": parsed["theme"],
+                                            "world": mundo,
+                                            "groups": parsed["groups"]
+                                        }
+                                        save_answer_entry(entry)
+                                        success = True
+                                        break
     
-    # Step 4: Update website
-    print(f"\n[4] Updating website data...")
+    # If still no success, try demo data so website shows something
+    if not success:
+        print("\n[!] Could not fetch and decrypt real puzzle data")
+        print("[!] This is expected if:")
+        print("    - No GAME_AES_KEY is set (run frida-key-extract workflow)")
+        print("    - The API endpoints have changed")
+        print("    - Network issues")
+        print("\n[*] Creating placeholder entry...")
+        entry = {
+            "date": today_str,
+            "theme": "Awaiting AES Key Extraction",
+            "world": mundo,
+            "groups": []
+        }
+        save_answer_entry(entry)
     
-    # For now, use text data from the working Texto/List endpoint
-    print("  Fetching text data from Texto/List endpoint...")
+    # Always fetch game texts (unencrypted endpoint)
+    print(f"\n[*] Fetching game texts (unencrypted)...")
     text_data = fetch_text_list()
-    
     if text_data and text_data.get("Records"):
-        # Extract useful game text strings
         records = text_data["Records"]
         game_texts = {}
         for rec in records:
@@ -398,7 +588,7 @@ def main():
             if isinstance(valor, dict) and "en" in valor:
                 game_texts[ident] = valor["en"]
         
-        # Save game texts
+        os.makedirs(DATA_DIR, exist_ok=True)
         texts_path = os.path.join(DATA_DIR, "game_texts.json")
         with open(texts_path, "w") as f:
             json.dump(game_texts, f, indent=2, ensure_ascii=False)
@@ -408,7 +598,7 @@ def main():
     print(f"  Done! Check {DATA_DIR}/ for output files.")
     print(f"{'=' * 60}")
     
-    return 0
+    return 0 if success else 1
 
 
 if __name__ == "__main__":
