@@ -76,18 +76,17 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: |
+          script: >
             echo "[*] Waiting for device..."
             adb wait-for-device
             sleep 15
             adb shell getprop sys.boot_completed
 
             echo "[*] Installing APK..."
-            mkdir -p /tmp/cxapk && cd /tmp/cxapk
-            unzip -o /tmp/codycross.apks 2>/dev/null || true
-            for apk in /tmp/cxapk/*.apk; do
-              [ -f "$apk" ] && adb install -r -t "$apk" 2>&1 || true
-            done
+            mkdir -p /tmp/cxapk && cd /tmp/cxapk && unzip -o /tmp/codycross.apks 2>/dev/null || true
+            adb install -r -t /tmp/cxapk/com.fanatee.cody.apk 2>&1 || true
+            adb install -r -t /tmp/cxapk/config.armeabi_v7a.apk 2>&1 || true
+            adb install -r -t /tmp/cxapk/config.arm64_v8a.apk 2>&1 || true
 
             echo "[*] Downloading frida-server for x86..."
             FV=$(frida --version 2>/dev/null | head -1)
@@ -106,8 +105,14 @@ jobs:
             sleep 8
 
             echo "[*] Running Frida hooks..."
-            timeout 90 frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause 2>&1 | tee /tmp/frida-output.log || true
-            timeout 30 frida -U -n "CodyCross" -l scripts/frida-extract.js 2>&1 | tee -a /tmp/frida-output.log || true
+            frida -U -f com.fanatee.cody -l scripts/frida-extract.js --no-pause 2>&1 | tee /tmp/frida-output.log &
+            FRIDA_PID=$!
+            sleep 60
+            kill $FRIDA_PID 2>/dev/null || true
+            frida -U -n "CodyCross" -l scripts/frida-extract.js 2>&1 | tee -a /tmp/frida-output.log &
+            FRIDA_PID2=$!
+            sleep 20
+            kill $FRIDA_PID2 2>/dev/null || true
 
             echo ""
             echo "=== FRIDA EXTRACTION LOG ==="
