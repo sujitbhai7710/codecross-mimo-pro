@@ -26,14 +26,18 @@ jobs:
       - name: Install dependencies
         run: pip install pycryptodome requests
 
-      - name: Fetch and decrypt puzzle data
+      - name: Fetch main puzzle data (worlds)
         run: python fetcher/fetch_answers.py
+        continue-on-error: true
+
+      - name: Fetch daily crossword + password answers
+        run: python fetcher/fetch_daily.py
         continue-on-error: true
 
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet data/answers.json && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+          (git diff --quiet data/answers.json data/daily_answers.json && echo "changed=false" >> $GITHUB_OUTPUT) || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit and push updates
         if: steps.changes.outputs.changed == 'true'
