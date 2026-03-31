@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeCross Answer Archive - All Past Puzzle Solutions</title>
-  <meta name="description" content="Browse all past CodeCross puzzle answers. Complete archive organized by date with auto-updating daily.">
+  <title>CodyCross Archive — All World Puzzle Answers</title>
+  <meta name="description" content="Browse the complete archive of CodyCross puzzle answers organized by world. Search across all worlds, groups, and clues.">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,28 +13,27 @@
   <header>
     <div class="container">
       <div class="logo">
-        <span class="logo-icon">🧩</span>
-        <h1>CodeCross <span class="highlight">Daily</span></h1>
+        <span class="logo-icon">&#x1F9E9;</span>
+        <h1>CodyCross <span class="highlight">Answers</span></h1>
       </div>
       <nav>
-        <a href="index.html">Today</a>
+        <a href="index.html">All Worlds</a>
         <a href="archive.html" class="active">Archive</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <section class="hero">
-      <h2>📚 Answer Archive</h2>
-      <p class="subtitle">All past puzzle solutions — auto-updated daily</p>
+    <section class="search-hero">
+      <h2>&#x1F4DA; World Archive</h2>
+      <p class="subtitle">Browse all worlds — click to expand clues</p>
+      <div class="search-wrapper">
+        <input type="text" id="search-input" placeholder="Search worlds, clues, or answers..." class="search-box" autocomplete="off" spellcheck="false">
+      </div>
       <div class="source-badge">
         <span class="dot"></span>
         <span id="last-updated">Checking...</span>
       </div>
-    </section>
-
-    <section class="archive-controls">
-      <input type="text" id="search-input" placeholder="Search by theme or date..." class="search-box">
     </section>
 
     <section class="archive-list" id="archive-container">
@@ -47,8 +46,8 @@
 
   <footer>
     <div class="container">
-      <p>CodeCross Daily Answers — Auto-updated from official API</p>
-      <p class="disclaimer">Reverse-engineered for educational purposes. Not affiliated with Fanatee.</p>
+      <p>CodyCross Answers — Complete crossword puzzle database</p>
+      <p class="disclaimer">Educational reference only. Not affiliated with Fanatee or CodyCross.</p>
     </div>
   </footer>
 

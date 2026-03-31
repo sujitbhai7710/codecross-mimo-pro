@@ -1,8 +1,8 @@
 // ============================================================
-// CodeCross Daily Answers — App Logic
+// CodyCross Answers — App Logic v4.0
 // ============================================================
-// Data Source: CodyCross API (codydev.fulano.com.br)
-// Auto-updated via GitHub Actions
+// Data Source: CodyCross Production API
+// Format: All worlds with groups, clues, and answers
 // ============================================================
 
 const DATA_URL = 'data/answers.json';
@@ -11,40 +11,107 @@ const DATA_URL = 'data/answers.json';
 // DATA LOADING
 // ============================================================
 
+let appData = null;
+
 async function loadData() {
-  const res = await fetch(DATA_URL + '?t=' + Date.now()); // Cache bust
+  const res = await fetch(DATA_URL + '?t=' + Date.now());
   if (!res.ok) throw new Error('Failed to load answer data');
   return res.json();
 }
 
 // ============================================================
-// DATE HELPERS
+// HELPERS
 // ============================================================
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+function highlightMatch(text, query) {
+  if (!query) return escapeHtml(text);
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  return escapeHtml(text).replace(regex, '<mark>$1</mark>');
+}
+
+// ============================================================
+// WORLD TABS
+// ============================================================
+
+let activeWorldIndex = 0;
+let searchQuery = '';
+
+function renderWorldTabs(worlds, activeIndex) {
+  const container = document.getElementById('world-tabs');
+  if (!container) return;
+
+  container.innerHTML = worlds.map((w, i) => `
+    <button class="world-tab ${i === activeIndex ? 'active' : ''}"
+            data-world="${i}"
+            title="World ${w.world}: ${escapeHtml(w.worldName)} — ${w.stats.clues} clues">
+      <span class="tab-num">${w.world}</span>
+      <span class="tab-name">${escapeHtml(w.worldName)}</span>
+    </button>
+  `).join('');
+
+  // Bind click events
+  container.querySelectorAll('.world-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      activeWorldIndex = parseInt(tab.dataset.world);
+      renderWorldTabs(worlds, activeWorldIndex);
+      renderWorldContent(worlds, activeWorldIndex, searchQuery);
+    });
   });
 }
 
-function getTodayStr() {
-  return new Date().toISOString().split('T')[0];
-}
-
-function daysAgo(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  const now = new Date();
-  now.setHours(0,0,0,0);
-  const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'Today';
-  if (diff === 1) return 'Yesterday';
-  return `${diff} days ago`;
-}
-
 // ============================================================
-// RENDERING
+// WORLD CONTENT
 // ============================================================
+
+function renderWorldContent(worlds, worldIdx, query) {
+  const container = document.getElementById('world-content');
+  if (!container || !worlds || !worlds[worldIdx]) return;
+
+  const world = worlds[worldIdx];
+
+  if (query) {
+    renderSearchResults(container, worlds, query);
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="world-header">
+      <h3>World ${world.world}: ${escapeHtml(world.worldName)}</h3>
+      <div class="world-stats">
+        <span class="stat-badge">${world.stats.groups} groups</span>
+        <span class="stat-badge">${world.stats.clues} clues</span>
+      </div>
+    </div>
+    <div class="groups-list">
+      ${world.groups.map((g, gi) => renderGroupCard(g, gi)).join('')}
+    </div>
+  `;
+
+  // Bind accordion toggle
+  container.querySelectorAll('.group-card').forEach(card => {
+    card.querySelector('.group-header').addEventListener('click', () => {
+      const puzzles = card.querySelector('.puzzles');
+      const isShown = puzzles.style.display !== 'none';
+      puzzles.style.display = isShown ? 'none' : 'block';
+      card.classList.toggle('expanded', !isShown);
+    });
+  });
+}
 
 function renderGroupCard(group, index) {
   const puzzles = group.puzzles.map(p => `
@@ -54,84 +121,177 @@ function renderGroupCard(group, index) {
     </div>
   `).join('');
 
+  const mainPuzzles = group.puzzles.filter(p => p.isMain);
+
   return `
     <div class="group-card">
       <div class="group-header">
-        <span class="group-number">${index + 1}</span>
-        <h3>${escapeHtml(group.name)}</h3>
+        <span class="group-number">${group.groupNumber}</span>
+        <div class="group-info">
+          <h4>Group ${group.groupNumber}</h4>
+          <span class="group-meta">${group.puzzles.length} clues</span>
+        </div>
+        <span class="expand-icon">&#x25BC;</span>
       </div>
-      <div class="puzzles">${puzzles}</div>
+      <div class="puzzles" style="display:none">
+        ${puzzles}
+      </div>
     </div>
   `;
-}
-
-function renderLoading() {
-  return `
-    <div class="loading-spinner">
-      <div class="spinner"></div>
-      <p>Loading puzzle answers...</p>
-    </div>
-  `;
-}
-
-function renderError(msg) {
-  return `
-    <div class="error-box">
-      <h3>⚠️ ${msg}</h3>
-      <p>This usually means the data hasn't been fetched yet. The site auto-updates daily via GitHub Actions.</p>
-      <p>Check back in a few hours, or visit the <a href="archive.html">archive</a> for past answers.</p>
-    </div>
-  `;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
 }
 
 // ============================================================
-// TODAY'S PAGE
+// SEARCH
 // ============================================================
 
-async function loadToday() {
-  const container = document.getElementById('answers-container');
-  const dateEl = document.getElementById('today-date');
-  const themeEl = document.getElementById('today-theme');
+function renderSearchResults(container, worlds, query) {
+  const q = query.toLowerCase();
+  let results = [];
+  let totalCount = 0;
+
+  worlds.forEach(world => {
+    world.groups.forEach(group => {
+      group.puzzles.forEach(puzzle => {
+        const clueMatch = puzzle.clue.toLowerCase().includes(q);
+        const answerMatch = puzzle.answer.toLowerCase().includes(q);
+        if (clueMatch || answerMatch) {
+          results.push({
+            worldNumber: world.world,
+            worldName: world.worldName,
+            groupNumber: group.groupNumber,
+            clue: puzzle.clue,
+            answer: puzzle.answer,
+            clueMatch,
+            answerMatch,
+          });
+          totalCount++;
+        }
+      });
+    });
+  });
+
+  // Update search stats
+  const statsEl = document.getElementById('search-stats');
+  if (statsEl) {
+    statsEl.textContent = totalCount > 0
+      ? `${totalCount} result${totalCount !== 1 ? 's' : ''} found`
+      : 'No results found';
+  }
+
+  if (results.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <p>No clues or answers matching "<strong>${escapeHtml(query)}</strong>"</p>
+        <p class="hint">Try different keywords or check your spelling</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Limit display to 200 results for performance
+  const displayResults = results.slice(0, 200);
+  const truncated = results.length > 200;
+
+  container.innerHTML = `
+    <div class="search-results">
+      ${displayResults.map(r => `
+        <div class="search-result-item">
+          <div class="result-meta">
+            <span class="result-world">World ${r.worldNumber}: ${escapeHtml(r.worldName)}</span>
+            <span class="result-group">Group ${r.groupNumber}</span>
+          </div>
+          <div class="result-row">
+            <span class="clue">${highlightMatch(r.clue, query)}</span>
+            <span class="answer ${r.answerMatch ? 'answer-match' : ''}">${highlightMatch(r.answer, query)}</span>
+          </div>
+        </div>
+      `).join('')}
+      ${truncated ? `<p class="truncated-notice">Showing 200 of ${results.length} results. Narrow your search for more specific results.</p>` : ''}
+    </div>
+  `;
+}
+
+// ============================================================
+// WORLDS PAGE INIT
+// ============================================================
+
+async function initWorldsPage() {
+  const container = document.getElementById('world-content');
+  const titleEl = document.getElementById('page-title');
+  const subtitleEl = document.getElementById('page-subtitle');
+  const searchInput = document.getElementById('search-input');
+  const updatedEl = document.getElementById('last-updated');
+  const statsEl = document.getElementById('search-stats');
 
   try {
     const data = await loadData();
-    const today = getTodayStr();
+    appData = data;
 
-    // Find today's entry (or most recent)
-    let entry = data.answers.find(a => a.date === today);
-    if (!entry && data.answers.length > 0) {
-      entry = data.answers[0]; // Use most recent
-    }
-
-    if (!entry) {
-      dateEl.textContent = 'No data yet';
-      themeEl.textContent = 'No answers available';
-      container.innerHTML = renderError('No puzzle data available yet');
+    const worlds = data.answers || [];
+    if (worlds.length === 0) {
+      container.innerHTML = renderError('No puzzle data available yet. The site auto-updates daily.');
       return;
     }
 
-    dateEl.textContent = formatDate(entry.date);
-    if (entry.date !== today) {
-      dateEl.textContent += ` (${daysAgo(entry.date)})`;
-    }
-    themeEl.textContent = entry.theme;
-    document.title = `${entry.theme} — CodeCross Daily Answers`;
+    // Update header
+    if (titleEl) titleEl.textContent = `${data.site.totalWorlds} Worlds — ${data.site.totalClues.toLocaleString()} Clues`;
+    if (subtitleEl) subtitleEl.textContent = `Complete CodyCross puzzle database`;
+    if (updatedEl) updatedEl.textContent = `Updated: ${data.site.lastUpdated}`;
 
-    if (!entry.groups || entry.groups.length === 0) {
-      container.innerHTML = renderError('Puzzle data is encrypted — decryption key needed');
-      return;
+    // Render tabs
+    renderWorldTabs(worlds, 0);
+
+    // Render first world (expanded first group by default)
+    renderWorldContent(worlds, 0, '');
+
+    // Expand first group
+    setTimeout(() => {
+      const firstCard = container.querySelector('.group-card');
+      if (firstCard) {
+        const puzzles = firstCard.querySelector('.puzzles');
+        puzzles.style.display = 'block';
+        firstCard.classList.add('expanded');
+      }
+    }, 50);
+
+    // Search
+    if (searchInput) {
+      searchInput.addEventListener('input', debounce((e) => {
+        searchQuery = e.target.value.trim();
+        if (searchQuery) {
+          renderWorldContent(worlds, activeWorldIndex, searchQuery);
+        } else {
+          statsEl.textContent = '';
+          renderWorldContent(worlds, activeWorldIndex, '');
+          // Re-expand first group if no search
+          setTimeout(() => {
+            const firstCard = container.querySelector('.group-card');
+            if (firstCard) {
+              const puzzles = firstCard.querySelector('.puzzles');
+              puzzles.style.display = 'block';
+              firstCard.classList.add('expanded');
+            }
+          }, 10);
+        }
+      }, 200));
+
+      // Keyboard shortcut: / to focus search
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          searchQuery = '';
+          statsEl.textContent = '';
+          searchInput.blur();
+          renderWorldContent(worlds, activeWorldIndex, '');
+        }
+      });
     }
 
-    container.innerHTML = entry.groups.map((g, i) => renderGroupCard(g, i)).join('');
   } catch (err) {
-    dateEl.textContent = 'Error';
-    themeEl.textContent = 'Could not load data';
     container.innerHTML = renderError(`Error: ${err.message}`);
   }
 }
@@ -140,8 +300,6 @@ async function loadToday() {
 // ARCHIVE PAGE
 // ============================================================
 
-let allAnswers = [];
-
 async function loadArchive() {
   const container = document.getElementById('archive-container');
   const updatedEl = document.getElementById('last-updated');
@@ -149,67 +307,79 @@ async function loadArchive() {
 
   try {
     const data = await loadData();
-    allAnswers = data.answers || [];
+    const worlds = data.answers || [];
 
     if (updatedEl && data.site) {
-      updatedEl.textContent = `Last updated: ${data.site.lastUpdated || 'Unknown'}`;
+      updatedEl.textContent = `Updated: ${data.site.lastUpdated || 'Unknown'}`;
     }
 
-    if (allAnswers.length === 0) {
-      container.innerHTML = '<p class="empty-state">No archive entries yet. The site auto-updates daily.</p>';
+    if (worlds.length === 0) {
+      container.innerHTML = '<p class="empty-state">No data yet. The site auto-updates daily.</p>';
       return;
     }
 
-    renderArchiveList(allAnswers);
+    renderArchiveList(worlds, '');
 
-    // Search functionality
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        const filtered = allAnswers.filter(a =>
-          a.date.includes(query) ||
-          (a.theme && a.theme.toLowerCase().includes(query))
-        );
-        renderArchiveList(filtered);
-      });
+      searchInput.addEventListener('input', debounce((e) => {
+        renderArchiveList(worlds, e.target.value.trim().toLowerCase());
+      }, 200));
     }
   } catch (err) {
-    container.innerHTML = `<p class="error-box">Error loading archive: ${err.message}</p>`;
+    container.innerHTML = `<div class="error-box"><h3>Error</h3><p>${err.message}</p></div>`;
   }
 }
 
-function renderArchiveList(answers) {
+function renderArchiveList(worlds, query) {
   const container = document.getElementById('archive-container');
+  if (!container) return;
 
-  container.innerHTML = answers.map(day => {
-    const hasGroups = day.groups && day.groups.length > 0;
-    const preview = hasGroups
-      ? day.groups.map(g =>
-          `<span class="archive-group-badge">${escapeHtml(g.name)}: ${g.puzzles.length} clues</span>`
-        ).join('')
-      : '<span class="archive-group-badge encrypted">🔒 Encrypted — needs decryption key</span>';
+  const filtered = query
+    ? worlds.filter(w =>
+        w.worldName.toLowerCase().includes(query) ||
+        w.groups.some(g =>
+          g.puzzles.some(p =>
+            p.clue.toLowerCase().includes(query) ||
+            p.answer.toLowerCase().includes(query)
+          )
+        )
+      )
+    : worlds;
 
-    const expanded = hasGroups ? day.groups.map((g, i) => `
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="empty-state">No matching worlds found.</p>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(world => {
+    const groupBadges = world.groups.map(g =>
+      `<span class="archive-group-badge">Group ${g.groupNumber}: ${g.puzzles.length} clues</span>`
+    ).join('');
+
+    const expandedContent = world.groups.slice(0, 5).map(g => `
       <div class="mini-group">
-        <h4>${escapeHtml(g.name)}</h4>
-        ${g.puzzles.map(p => `
+        <h4>Group ${g.groupNumber}</h4>
+        ${g.puzzles.slice(0, 8).map(p => `
           <div class="mini-puzzle">
             <span class="clue">${escapeHtml(p.clue)}</span>
             <span class="answer">${escapeHtml(p.answer)}</span>
           </div>
         `).join('')}
+        ${g.puzzles.length > 8 ? `<p class="more-clues">+ ${g.puzzles.length - 8} more clues</p>` : ''}
       </div>
-    `).join('') : '<p style="padding:16px;color:var(--text-muted)">Encrypted data — decryption key extraction in progress</p>';
+    `).join('');
+
+    const hasMoreGroups = world.groups.length > 5;
 
     return `
       <div class="archive-item" onclick="toggleArchiveItem(this)">
         <div class="archive-meta">
-          <span class="archive-date">${formatDate(day.date)} — ${daysAgo(day.date)}</span>
-          ${day.world ? `<span class="archive-world">World ${day.world}</span>` : ''}
+          <span class="archive-world">World ${world.world}</span>
+          <span class="archive-stats">${world.stats.groups} groups &middot; ${world.stats.clues} clues</span>
         </div>
-        <div class="archive-theme">${escapeHtml(day.theme)}</div>
-        <div class="archive-preview">${preview}</div>
-        <div class="archive-expanded" style="display:none">${expanded}</div>
+        <div class="archive-theme">${escapeHtml(world.worldName)}</div>
+        <div class="archive-preview">${groupBadges}</div>
+        <div class="archive-expanded" style="display:none">${expandedContent}</div>
       </div>
     `;
   }).join('');
@@ -229,9 +399,15 @@ function toggleArchiveItem(el) {
 }
 
 // ============================================================
-// AUTO-INIT
+// SHARED RENDERING
 // ============================================================
 
-if (document.getElementById('answers-container')) {
-  document.addEventListener('DOMContentLoaded', loadToday);
+function renderError(msg) {
+  return `
+    <div class="error-box">
+      <h3>&#x26A0;&#xFE0F; ${msg}</h3>
+      <p>This site auto-updates daily via GitHub Actions.</p>
+      <p>Check back in a few hours, or visit the <a href="archive.html">archive</a>.</p>
+    </div>
+  `;
 }

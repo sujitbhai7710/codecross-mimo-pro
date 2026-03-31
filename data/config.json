@@ -1,0 +1,1594 @@
+{
+  "AppConfigVersion": "f92e567d33a5e74fc5a9d4ee8f11be0a",
+  "Global": {
+    "ProgressToShowFirstDailyReward": 3,
+    "HardModeEnabledCountries": [
+      {
+        "Language": "1aca585a-8e15-3029-89a0-54aa078acec2",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "a495a4f1-0500-763a-9515-bc7b124e8fff",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "586ff3df-8088-2405-8f8b-9bbd6068f175",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "c75e5d51-7dd9-327f-16f9-d1f1d022695e",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "6e44e8d6-6cff-5275-3b28-32ba6f8b79e6",
+        "Enabled": [],
+        "Disabled": []
+      }
+    ],
+    "MultiDifficultyModeEnabledCountries": [
+      {
+        "Language": "1aca585a-8e15-3029-89a0-54aa078acec2",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "a495a4f1-0500-763a-9515-bc7b124e8fff",
+        "Enabled": [],
+        "Disabled": []
+      },
+      {
+        "Language": "c75e5d51-7dd9-327f-16f9-d1f1d022695e",
+        "Enabled": [],
+        "Disabled": []
+      }
+    ],
+    "SessionConfig": {
+      "Timeout": "00:30:00"
+    },
+    "FasterPuzzleComplete": false,
+    "EraseWrongWord": true,
+    "ErrorAnimationAccelerated": false,
+    "AdvanceToNextWordInstantlyOnCorrectCompletion": false,
+    "InstantErrorFeedbackWhenOnlyOneWrongSlot": false
+  },
+  "Ad": {
+    "GoingToPuzzle": {
+      "Active": true,
+      "Tde": 5,
+      "LimiteSeInferiorDeveMostrar": 85,
+      "PuzzlesConsiderados": 10
+    },
+    "GoingToShortTrackPuzzle": {
+      "Active": true,
+      "Tde": 5,
+      "LimiteSeInferiorDeveMostrar": 75,
+      "PuzzlesConsiderados": 10
+    },
+    "GoingToTodaysPasswordPuzzle": {
+      "Active": true,
+      "Tde": 180,
+      "LimiteSeInferiorDeveMostrar": 85,
+      "PuzzlesConsiderados": 10
+    },
+    "GoingToTodaysCrosswordPuzzle": {
+      "Active": true,
+      "Tde": 180,
+      "LimiteSeInferiorDeveMostrar": 85,
+      "PuzzlesConsiderados": 10
+    },
+    "BackFromPuzzle": {
+      "Active": true,
+      "Tde": 5
+    },
+    "PuzzleComplete": {
+      "Googler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      },
+      "NotGoogler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      }
+    },
+    "PuzzleCompleteCrossword": {
+      "Googler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      },
+      "NotGoogler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      }
+    },
+    "PuzzleCompleteShortTrack": {
+      "Googler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      },
+      "NotGoogler": {
+        "CpvAcmDoThr": 100,
+        "CpvAbxDoThr": 100,
+        "NdrVistosParaAtingirThr": 3,
+        "VarValMinGanho": 0,
+        "VarValMaxGanho": 100,
+        "MinDeSaldoPvaSemGastarPwp": 2,
+        "MinRwd": 1,
+        "MaxRwd": 6,
+        "RwdCasoMinDeSaldo": 2,
+        "CpvCasoMinDeSaldo": 100,
+        "Active": true,
+        "EnablesCooldown": true,
+        "InterCooldownOverride": "00:00:00"
+      }
+    },
+    "DoubleDailyReward": {
+      "NrDeVezesParaSkipar": 4,
+      "NrDeDiasQueNaoMostra": 3,
+      "NrDeTentativas": 3,
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "FreeTokens": {
+      "LimiteDeVideosDiario": 20,
+      "BadgeModalOutOfTokensActive": true,
+      "BadgeMenuTopActive": true,
+      "NrDeTokens": 1,
+      "PuzzleMinParaVerBadgeNoGameplay": 4,
+      "MaxDeTokensParaVer": 25,
+      "TempoDeEsperaCasoNoFill": 2,
+      "NumeroDePuzzlesChangeBadgeMapa": 2,
+      "MinDeTokensParaEsconderBadge": 20,
+      "NumeroDePuzzlesSemUsarParaEsconderBadge": 3,
+      "LimiteDeVideosPorPeriodo": 2,
+      "DuracaoDoPeriodo": "00:00:45",
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "StreakRecovery": {
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "UnlockCrossword": {
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "UnlockShortTracks": {
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "PuzzleBanner": {
+      "Active": false,
+      "CloseButtonEnabled": false
+    },
+    "PuzzleCompleteAuto": {
+      "Tde": 180,
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "PuzzleCompleteContinue": {
+      "Active": false,
+      "Tde": 180
+    },
+    "FreeBitz": {
+      "LimiteDeVideosDiario": 12,
+      "NrDeBitz": 25,
+      "TentativasDeExibicaoCasoNoFill": 2,
+      "LimiteDeVideosPorPeriodo": 2,
+      "DuracaoDoPeriodo": "00:00:45",
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "OutOfTokens": {
+      "LimiteDeVideosPorPeriodo": 2,
+      "NrMaxDibz": 0,
+      "DuracaoDoPeriodo": "6.00:00:00",
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "ShortTrackBanner": {
+      "Active": false,
+      "CloseButtonEnabled": true
+    },
+    "PuzzleCompleteBar": {
+      "SectionsToAdd": 3,
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "GooglerV3": {
+      "UnlockPuzzle": 6,
+      "ShowInGameplayFrom": "00:00:10",
+      "ShowInGameplayUntil": "00:01:00",
+      "MoveFromHeaderToGameplayWithoutHitAfter": "00:00:40",
+      "MoveFromHeaderToGameplayWithoutHitLimitPerPuzzle": 2,
+      "MoveFromHeaderToGameplayAtAllAfter": "00:02:00",
+      "MoveFromHeaderToGameplayAtAllLimitPerPuzzle": 1,
+      "MoveFromGameplayToHeaderAfter": "00:00:10",
+      "ReshowAfterClaim": "00:00:02",
+      "MaxDisplaysWithoutUse": 5,
+      "CooldownToNextDisplay": "3.00:00:00",
+      "ShowPrizeAmount": true,
+      "AlternativeLayout": true,
+      "AdventureModeEnabled": true,
+      "CrosswordModeEnabled": true,
+      "ShortTrackModeEnabled": true,
+      "Active": true,
+      "EnablesCooldown": false,
+      "InterCooldownOverride": "00:00:00"
+    },
+    "BannerV2": {
+      "ProgressToUnlock": 1,
+      "Enabled": true,
+      "Fallback": {
+        "Id": "0aa23ab903d1a097",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "FirstImpression": {
+        "Id": "0aa23ab903d1a097",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloors": [],
+      "BidFloorsEnabled": false
+    },
+    "InterstitialV2": {
+      "ProgressToUnlock": 4,
+      "Enabled": true,
+      "Fallback": {
+        "Id": "ac9f9e7ec1cb89ba",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "FirstImpression": {
+        "Id": "5d3a4060f15d7798",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloors": [
+        {
+          "Id": "84f883afc82fa418",
+          "Timeout": "00:00:30",
+          "Floor": 1
+        },
+        {
+          "Id": "c0e1183fc0e15166",
+          "Timeout": "00:00:30",
+          "Floor": 2.5
+        },
+        {
+          "Id": "a20b890262381415",
+          "Timeout": "00:00:30",
+          "Floor": 4.5
+        },
+        {
+          "Id": "507c826f803f100c",
+          "Timeout": "00:00:30",
+          "Floor": 8.5
+        },
+        {
+          "Id": "530d513c15e97aa1",
+          "Timeout": "00:00:30",
+          "Floor": 15
+        },
+        {
+          "Id": "735ecd82ae09f51e",
+          "Timeout": "00:00:30",
+          "Floor": 25
+        },
+        {
+          "Id": "83bad0bc4a896203",
+          "Timeout": "00:00:30",
+          "Floor": 65
+        },
+        {
+          "Id": "0133604a01796828",
+          "Timeout": "00:00:30",
+          "Floor": 180
+        }
+      ],
+      "BidFloorsEnabled": false
+    },
+    "RewardedV2": {
+      "PlayInterIfNoFill": true,
+      "Enabled": true,
+      "Fallback": {
+        "Id": "1b938ccabeb0a230",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "FirstImpression": {
+        "Id": "c4c3bb6cf79e2c16",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloors": [
+        {
+          "Id": "156b6bd487a97caa",
+          "Timeout": "00:00:30",
+          "Floor": 2
+        },
+        {
+          "Id": "d9a205ecdbbe3aca",
+          "Timeout": "00:00:30",
+          "Floor": 4
+        },
+        {
+          "Id": "cdb6664a04a47ca5",
+          "Timeout": "00:00:30",
+          "Floor": 7.5
+        },
+        {
+          "Id": "a5c7431db9a2eae3",
+          "Timeout": "00:00:30",
+          "Floor": 11
+        },
+        {
+          "Id": "445668beeca7b413",
+          "Timeout": "00:00:30",
+          "Floor": 20
+        },
+        {
+          "Id": "f3dcd0b86a34f521",
+          "Timeout": "00:00:30",
+          "Floor": 55
+        },
+        {
+          "Id": "7465df8d6c390233",
+          "Timeout": "00:00:30",
+          "Floor": 200
+        }
+      ],
+      "BidFloorsEnabled": false
+    },
+    "InterstitialV3": {
+      "ProgressToUnlock": 4,
+      "Enabled": true,
+      "Fallback": {
+        "Id": "ac9f9e7ec1cb89ba",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "FirstImpression": {
+        "Id": "5d3a4060f15d7798",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloor": {
+        "Id": "5d3a4060f15d7798",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloorPrices": [
+        0,
+        0.5,
+        1.16,
+        1.74,
+        2.5,
+        2.78,
+        3.54,
+        4.5,
+        4.8,
+        5.62,
+        7.1,
+        8.5,
+        8.72,
+        9.82,
+        11.74,
+        15,
+        15.18,
+        16.78,
+        19.78,
+        25,
+        25.72,
+        28.62,
+        32.08,
+        45.68,
+        65,
+        69.64,
+        76.82,
+        116.02,
+        182.12,
+        206.2,
+        300.66
+      ],
+      "BidFloorsEnabled": true,
+      "BidFloorLevelsUp": 5,
+      "BidFloorLevelsDown": -1
+    },
+    "RewardedV3": {
+      "PlayInterIfNoFill": true,
+      "Enabled": true,
+      "Fallback": {
+        "Id": "1b938ccabeb0a230",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "FirstImpression": {
+        "Id": "c4c3bb6cf79e2c16",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloor": {
+        "Id": "8d55f815741f891b",
+        "Timeout": null,
+        "Floor": 0
+      },
+      "BidFloorPrices": [
+        0,
+        0.5,
+        1.16,
+        1.74,
+        2.5,
+        2.78,
+        3.54,
+        4.5,
+        4.8,
+        5.62,
+        7.1,
+        8.5,
+        8.72,
+        9.82,
+        11.74,
+        15,
+        15.18,
+        16.78,
+        19.78,
+        25,
+        25.72,
+        28.62,
+        32.08,
+        45.68,
+        65,
+        69.64,
+        76.82,
+        116.02,
+        182.12,
+        206.2,
+        300.66
+      ],
+      "BidFloorsEnabled": true,
+      "BidFloorLevelsUp": 5,
+      "BidFloorLevelsDown": -1
+    }
+  },
+  "Dna": {
+    "TempoMaximoNoBackground": 120,
+    "TempoMaximoParaAcertarCifra": 10
+  },
+  "Profile": {
+    "MinUsernameChars": 2,
+    "MaxUsernameChars": 16
+  },
+  "Modal": {
+    "ModalConfigFacebookLoginSpecial": {
+      "Enabled": true,
+      "ShowPuzzles": [
+        5,
+        16,
+        85
+      ]
+    },
+    "ModalConfigPushNotification": {
+      "Enabled": true,
+      "NotificationDays": [
+        1,
+        5,
+        15
+      ]
+    },
+    "ModalConfigFeedback": {
+      "Enabled": true,
+      "ShowPuzzles": [
+        11,
+        35,
+        65
+      ]
+    },
+    "ModalConfigInviteEasyModeWhenUserIsStruggling": {
+      "Enabled": true,
+      "ShowPuzzles": [
+        2,
+        4,
+        6
+      ],
+      "TokensThreshold": 7
+    },
+    "ModalConfigRateMyApp": {
+      "Enabled": true,
+      "ShowPuzzle": 25,
+      "RemindAfter": 125
+    },
+    "ModalConfigSecretMessageTutorial": {
+      "Enabled": true,
+      "ShowPuzzles": [
+        17
+      ]
+    },
+    "ModalConfigAge": {
+      "Enabled": true,
+      "MinShowPuzzle": 7,
+      "ShowOnLaunch": false
+    }
+  },
+  "Tutorial": {
+    "Profile": {
+      "Enabled": true,
+      "MinPuzzle": 6
+    },
+    "StreakHeader": {
+      "MinStreak": 2,
+      "Enabled": true,
+      "MinPuzzle": 10
+    }
+  },
+  "LiveOps": {
+    "EventsTabConfig": {
+      "Enabled": true,
+      "MinPuzzleNotification": 6
+    },
+    "DailyStreakConfig": {
+      "Enabled": false,
+      "StreakInterval": 7,
+      "ShieldConfig": {
+        "MaxShields": 2,
+        "ShieldPrice": 10
+      },
+      "Milestones": {
+        "IntervalBetweenMilestones": 100,
+        "MilestonesWithPersonalizations": {
+          "3": 1,
+          "10": 2,
+          "30": 3,
+          "100": 4,
+          "200": 5,
+          "365": 6,
+          "1000": 7
+        }
+      },
+      "Notifications": {
+        "TimeToTriggerRegularPush": "20:00:00",
+        "TimeToTriggerStreakAboutToBeLostPush": "11:00:00",
+        "DontMissMinStreak": 15
+      }
+    },
+    "FacebookVipConfig": {
+      "Enabled": true,
+      "ImageUrl": "https://d1rckson8nwdpe.cloudfront.net/live-ops/facebook-vip/facebook.vip.modal.png",
+      "LinkUrl": "https://www.facebook.com/groups/605188500281163"
+    },
+    "TimedNotificationsConfig": {
+      "Enabled": true,
+      "PushTime": "08:00:00",
+      "PushIntervals": [
+        "1.00:00:00",
+        "2.00:00:00",
+        "3.00:00:00",
+        "7.00:00:00",
+        "15.00:00:00"
+      ]
+    },
+    "TodayCrosswordConfig": {
+      "Enabled": true,
+      "UnlockPuzzleCost": 2,
+      "UnlockArchiveWithoutPaying": false,
+      "ModalOnboardingPuzzle": 20,
+      "UnlockPuzzle": 0,
+      "ModalDeFasesNagUnlockPuzzle": -1
+    },
+    "TodaysPasswordConfig": {
+      "Enabled": false,
+      "UnlockPuzzle": 1,
+      "ShowModalPuzzle": 15,
+      "CostRevealAnswer": 5
+    },
+    "ShortTrackConfig": {
+      "CostForRecharge": 10,
+      "TimeBetweenCharges": "00:30:00",
+      "MaxEnergy": 5,
+      "TimeBeforeEndToNotify": "06:00:00",
+      "EventReminderTime": "15.00:00:00",
+      "ComingSoonCardCount": 2,
+      "LockedCardCount": 1
+    },
+    "FeaturesOrder": [
+      6,
+      4,
+      7,
+      2,
+      5,
+      3,
+      1
+    ]
+  },
+  "GameplayModesConfig": {
+    "AdventureModeGameplayConfig": {
+      "RevealLetterConfigs": {
+        "Preco": 1,
+        "DisponivelAPartirDoPuzzle": 0
+      },
+      "LetterRainConfigs": {
+        "PercentualCorteTabuleiro": 0.33,
+        "QuantidadeLetrasReveladasInicio": 10,
+        "QuantidadeLetrasReveladasMeioJogo": 8,
+        "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 3,
+        "ArrayRevelacaoPrimeiraLetra": [
+          1,
+          2,
+          2,
+          3
+        ],
+        "Preco": 2,
+        "DisponivelAPartirDoPuzzle": 4
+      },
+      "AnagramConfigs": {
+        "Preco": 2,
+        "DisponivelAPartirDoPuzzle": 8
+      },
+      "RevealWordConfigs": {
+        "Preco": 3,
+        "DisponivelAPartirDoPuzzle": 12
+      },
+      "PropagacaoConfigs": {
+        "MinimoDeSlotsDisponiveis": 1,
+        "Proporcoes": [
+          [
+            0,
+            1,
+            1,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            2
+          ],
+          [
+            1,
+            1,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            2,
+            3
+          ]
+        ],
+        "SecondToLastPropagationOdds": 100,
+        "FeedbackChangesPropagation": true
+      },
+      "CanAccessCompletedGroups": true,
+      "AutoOpenNextPin": false,
+      "WordCompletionAnimationStartAcceleration": false,
+      "RemoveIntroAutoScroll": false
+    },
+    "CrosswordModeGameplayConfig": {
+      "RevealLetterConfigs": {
+        "1": {
+          "Preco": 1,
+          "DisponivelAPartirDoPuzzle": 0
+        },
+        "2": {
+          "Preco": 1,
+          "DisponivelAPartirDoPuzzle": 0
+        }
+      },
+      "LetterRainConfigs": {
+        "1": {
+          "PercentualCorteTabuleiro": 0.33,
+          "QuantidadeLetrasReveladasInicio": 5,
+          "QuantidadeLetrasReveladasMeioJogo": 3,
+          "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 2,
+          "ArrayRevelacaoPrimeiraLetra": [
+            1,
+            1,
+            2,
+            2
+          ],
+          "Preco": 2,
+          "DisponivelAPartirDoPuzzle": 4
+        },
+        "2": {
+          "PercentualCorteTabuleiro": 0.33,
+          "QuantidadeLetrasReveladasInicio": 10,
+          "QuantidadeLetrasReveladasMeioJogo": 8,
+          "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 5,
+          "ArrayRevelacaoPrimeiraLetra": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "Preco": 2,
+          "DisponivelAPartirDoPuzzle": 4
+        }
+      },
+      "PropagacaoConfigs": {
+        "1": {
+          "TiersThresholds": [
+            25
+          ],
+          "QtdParaPropagar": [
+            1,
+            0
+          ]
+        },
+        "2": {
+          "TiersThresholds": [
+            25,
+            50
+          ],
+          "QtdParaPropagar": [
+            2,
+            1,
+            0
+          ]
+        }
+      },
+      "UnlockPuzzle": 50
+    },
+    "CryptoModeGameplayConfig": {
+      "PropagacaoConfigs": {
+        "QtdeMinimaTilesNaoReveladosAposPropagar": 0,
+        "QtdeMaximaTilesNaoReveladosAposPropagar": 3
+      },
+      "RevealLetterConfig": {
+        "Preco": 1,
+        "DisponivelAPartirDoPuzzle": 0
+      },
+      "LetterRainConfig": {
+        "PercentualCorteTabuleiro": 0.33,
+        "QuantidadeLetrasReveladasInicio": 10,
+        "QuantidadeLetrasReveladasMeioJogo": 8,
+        "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 3,
+        "ArrayRevelacaoPrimeiraLetra": [
+          1,
+          2,
+          2,
+          3
+        ],
+        "Preco": 2,
+        "DisponivelAPartirDoPuzzle": 4
+      },
+      "AnagramConfig": {
+        "Preco": 2,
+        "DisponivelAPartirDoPuzzle": 8
+      },
+      "RevealWordConfig": {
+        "Preco": 3,
+        "DisponivelAPartirDoPuzzle": 12
+      },
+      "WordCompletionAnimationStartAcceleration": false,
+      "UnlockPuzzle": 50
+    },
+    "DragTileModeGameplayConfig": {
+      "RevealLetterConfig": {
+        "Preco": 1,
+        "DisponivelAPartirDoPuzzle": 0
+      },
+      "LetterRainConfig": {
+        "Small": {
+          "PercentualCorteTabuleiro": 0.33,
+          "QuantidadeLetrasReveladasInicio": 4,
+          "QuantidadeLetrasReveladasMeioJogo": 3,
+          "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 0,
+          "ArrayRevelacaoPrimeiraLetra": [],
+          "Preco": 2,
+          "DisponivelAPartirDoPuzzle": 4
+        },
+        "Medium": {
+          "PercentualCorteTabuleiro": 0.33,
+          "QuantidadeLetrasReveladasInicio": 6,
+          "QuantidadeLetrasReveladasMeioJogo": 4,
+          "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 0,
+          "ArrayRevelacaoPrimeiraLetra": [],
+          "Preco": 2,
+          "DisponivelAPartirDoPuzzle": 4
+        },
+        "Large": {
+          "PercentualCorteTabuleiro": 0.33,
+          "QuantidadeLetrasReveladasInicio": 10,
+          "QuantidadeLetrasReveladasMeioJogo": 7,
+          "QuantidadeMaximaDeLetrasReveladasParaRevelarUmaCifra": 0,
+          "ArrayRevelacaoPrimeiraLetra": [],
+          "Preco": 2,
+          "DisponivelAPartirDoPuzzle": 4
+        }
+      },
+      "UnlockPuzzle": 50
+    },
+    "ExpeditionModeGameplayConfig": {
+      "UnlockPuzzle": 50
+    },
+    "MiniQuestModeGameplayConfig": {
+      "UnlockPuzzle": 50
+    }
+  },
+  "PackConfig": {
+    "Enabled": true,
+    "PuzzleCost": 2,
+    "PuzzleParaLiberarPacks": 15,
+    "PackCollectionsVersion": {
+      "e85217af-89d5-4976-8fbd-10b89b895d7b": 10,
+      "86dca5e0-add2-4020-b26a-82a4ea135e97": 2,
+      "a2bf8938-3c7e-4b2d-a44e-a0babd78adf9": 2,
+      "a60bc1b6-46a5-495f-8ded-b33d55442007": 3
+    },
+    "ModalNovosPacks": {
+      "Language": "1aca585a-8e15-3029-89a0-54aa078acec2",
+      "Versao": 135,
+      "Packs": [
+        {
+          "Icone": "https://s3.amazonaws.com/codycross-packs/icones/721929a173ad46f7a13fd9c239c44177/icon",
+          "Nome": "ABBA"
+        },
+        {
+          "Icone": "https://s3.amazonaws.com/codycross-packs/icones/2b553fe00de2403d900e8bd495311295/icon",
+          "Nome": "Abraham Lincoln"
+        },
+        {
+          "Icone": "https://s3.amazonaws.com/codycross-packs/icones/56c23fb26549493ca91696d638412ec2/icon",
+          "Nome": "Alliteration"
+        }
+      ]
+    }
+  },
+  "SubscriptionConfig": {
+    "Enabled": true,
+    "FaqUrl": "https://codycross-en-2-0.helpscoutdocs.com/category/188-subscriptions-and-packs",
+    "BenefitsV2": [
+      {
+        "Description": "No ads when you solve puzzles",
+        "SubscriptionBenefitIcon": 1
+      },
+      {
+        "Description": "More daily prizes",
+        "SubscriptionBenefitIcon": 2
+      },
+      {
+        "Description": "Earn more pages by solving puzzles",
+        "SubscriptionBenefitIcon": 7
+      },
+      {
+        "Description": "Unlimited energy to play Missions",
+        "SubscriptionBenefitIcon": 5
+      }
+    ],
+    "ProductId": "codycross.subscription.monthly.freetrial.a",
+    "SubscriptionType": 2
+  },
+  "MapChestConfig": {
+    "Enabled": true,
+    "RateOfAppearance": 3
+  },
+  "AvatarConfig": {
+    "AvatarCost": 10,
+    "Version": "6c075e1196261f5b"
+  },
+  "LimitedOffersConfig": [
+    {
+      "OfferPuzzle": 5,
+      "Enabled": true,
+      "OfferDuration": "1.00:00:00",
+      "Product": "codycross.bundle.3",
+      "TokenThreshold": 5
+    }
+  ],
+  "CifraRatingQueueConfig": {
+    "CifraQueueLength": 10,
+    "RefreshThreshold": 0.7,
+    "Enabled": true,
+    "MinPuzzle": 50
+  },
+  "SecretMessageConfig": {
+    "Enabled": true,
+    "DailyLimit": 10
+  },
+  "CascataPorCpm": {
+    "Enabled": true,
+    "Rewarded": [
+      1.2,
+      1.5,
+      25,
+      45,
+      100
+    ],
+    "Interstitial": [
+      1.2,
+      1.5,
+      20,
+      30,
+      70
+    ],
+    "Banner": [
+      0.07,
+      0.08,
+      1.06,
+      2,
+      3.6
+    ]
+  },
+  "ProductConfig": {
+    "NoAdsProductConfig": {
+      "Enabled": true,
+      "CPM": 0
+    },
+    "NoAdsPeriodConfig": {
+      "Enabled": true,
+      "CPM": 0
+    }
+  },
+  "InAppOfferConfig": {
+    "AfterInterstitial": {
+      "Enabled": true,
+      "BaseOffers": [
+        {
+          "Enabled": true,
+          "Order": 1,
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "PrivateName": "OfertaSimplesForaDaLoja",
+          "Product": {
+            "Identificador": "codycross.tokens.pack.2",
+            "AppleProductId": "codycross.tokens.pack.2",
+            "AndroidProductId": "codycross.tokens.pack.2",
+            "GalaxyStoreProductId": "codycross.tokens.pack.2",
+            "Nome": "Pocketful of tokens",
+            "Descricao": "56 Tokens",
+            "AdFreeTime": 1,
+            "AdFreeTimeUnit": 3,
+            "InfiniteEnergyTime": 0,
+            "InfiniteEnergyTimeUnit": 0,
+            "RewardBundle": [
+              {
+                "Item": 1,
+                "Count": 56
+              }
+            ],
+            "LabelType": 0,
+            "USDBasePrice": 4.99,
+            "Label": 0
+          },
+          "Duration": "00:00:00",
+          "Delay": "00:00:00",
+          "AssetBundle": {
+            "Id": "42c7cb0f-95dc-4e2b-87a9-17bb19f617fd",
+            "Language": "en",
+            "Content": {
+              "title": "NO ADS\n+ EXTRA TOKENS",
+              "disclaimer": "You can still watch ads to earn rewards",
+              "skip": "No thanks",
+              "offer_description": "No ads for 30 days\n+ 56 Tokens",
+              "time_left_detail": ""
+            },
+            "Version": 15
+          }
+        },
+        {
+          "Enabled": true,
+          "Order": 2,
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "PrivateName": "OfertaSimplesNaLoja",
+          "Product": {
+            "Identificador": "codycross.no.ads.period",
+            "AppleProductId": "codycross.no.ads.period",
+            "AndroidProductId": "codycross.no.ads.period",
+            "GalaxyStoreProductId": "",
+            "Nome": "No ads for 30 days",
+            "Descricao": "",
+            "AdFreeTime": 0,
+            "AdFreeTimeUnit": 0,
+            "InfiniteEnergyTime": 0,
+            "InfiniteEnergyTimeUnit": 0,
+            "RewardBundle": null,
+            "LabelType": 0,
+            "USDBasePrice": 3.99,
+            "Label": 0
+          },
+          "Duration": "00:00:00",
+          "Delay": "00:00:00",
+          "AssetBundle": {
+            "Id": "62594b3f-16b8-4020-b89e-4ebb5022563a",
+            "Language": "en",
+            "Content": {
+              "title": "NO ADS",
+              "disclaimer": "You can still watch ads to earn rewards",
+              "skip": "No thanks",
+              "offer_description": "Remove ads\nfor 30 Days",
+              "time_left_detail": ""
+            },
+            "Version": 13
+          }
+        },
+        {
+          "Enabled": true,
+          "Order": 4,
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "PrivateName": "no_ads_forever",
+          "Product": {
+            "Identificador": "codycross.no.ads",
+            "AppleProductId": "codycross.no.ads",
+            "AndroidProductId": "codycross.no.ads",
+            "GalaxyStoreProductId": "",
+            "Nome": "No Ads Ever",
+            "Descricao": "Remove Ads",
+            "AdFreeTime": 0,
+            "AdFreeTimeUnit": 0,
+            "InfiniteEnergyTime": 0,
+            "InfiniteEnergyTimeUnit": 0,
+            "RewardBundle": null,
+            "LabelType": 0,
+            "USDBasePrice": 9.99,
+            "Label": 0
+          },
+          "Duration": "00:00:00",
+          "Delay": "01:00:00",
+          "AssetBundle": {
+            "Id": "7a1498d3-a8b3-4eeb-a072-5a62901898bd",
+            "Language": "en",
+            "Content": {
+              "title": "NO ADS FOREVER",
+              "disclaimer": "You can still watch ads to earn rewards",
+              "skip": "No thanks",
+              "offer_description": "NO ADS FOREVER",
+              "time_left_detail": "Ends in:"
+            },
+            "Version": 13
+          }
+        }
+      ],
+      "PerCpmOffers": [
+        {
+          "DailyInterstitialPeriod": 30,
+          "Products": [
+            {
+              "Identificador": "codycross.no.ads.period.offer.3",
+              "AppleProductId": "codycross.no.ads.period.offer.3",
+              "AndroidProductId": "codycross.no.ads.period.offer.3",
+              "GalaxyStoreProductId": "",
+              "Nome": "No ads for 30 days",
+              "Descricao": "",
+              "AdFreeTime": 0,
+              "AdFreeTimeUnit": 0,
+              "InfiniteEnergyTime": 0,
+              "InfiniteEnergyTimeUnit": 0,
+              "RewardBundle": null,
+              "LabelType": 0,
+              "USDBasePrice": 0.99,
+              "Label": 0
+            },
+            {
+              "Identificador": "codycross.no.ads.period.offer.2",
+              "AppleProductId": "codycross.no.ads.period.offer.2",
+              "AndroidProductId": "codycross.no.ads.period.offer.2",
+              "GalaxyStoreProductId": "",
+              "Nome": "No ads for 30 days",
+              "Descricao": "",
+              "AdFreeTime": 0,
+              "AdFreeTimeUnit": 0,
+              "InfiniteEnergyTime": 0,
+              "InfiniteEnergyTimeUnit": 0,
+              "RewardBundle": null,
+              "LabelType": 0,
+              "USDBasePrice": 1.99,
+              "Label": 0
+            },
+            {
+              "Identificador": "codycross.no.ads.period.offer.1",
+              "AppleProductId": "codycross.no.ads.period.offer.1",
+              "AndroidProductId": "codycross.no.ads.period.offer.1",
+              "GalaxyStoreProductId": "",
+              "Nome": "No ads for 30 days",
+              "Descricao": "",
+              "AdFreeTime": 0,
+              "AdFreeTimeUnit": 0,
+              "InfiniteEnergyTime": 0,
+              "InfiniteEnergyTimeUnit": 0,
+              "RewardBundle": null,
+              "LabelType": 0,
+              "USDBasePrice": 2.99,
+              "Label": 0
+            }
+          ],
+          "Thresholds": [
+            0.99,
+            1.99,
+            2.99
+          ],
+          "Enabled": true,
+          "Order": 3,
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "PrivateName": "OfertaPorCPM",
+          "Product": {
+            "Identificador": "codycross.no.ads.period",
+            "AppleProductId": "codycross.no.ads.period",
+            "AndroidProductId": "codycross.no.ads.period",
+            "GalaxyStoreProductId": "",
+            "Nome": "No ads for 30 days",
+            "Descricao": "",
+            "AdFreeTime": 0,
+            "AdFreeTimeUnit": 0,
+            "InfiniteEnergyTime": 0,
+            "InfiniteEnergyTimeUnit": 0,
+            "RewardBundle": null,
+            "LabelType": 0,
+            "USDBasePrice": 3.99,
+            "Label": 0
+          },
+          "Duration": "00:59:30",
+          "Delay": "2.00:00:30",
+          "AssetBundle": {
+            "Id": "6edd6700-3f22-4dbe-9221-768693e296da",
+            "Language": "en",
+            "Content": {
+              "title": "SPECIAL OFFER",
+              "disclaimer": "You can still watch ads to earn rewards",
+              "skip": "No thanks",
+              "offer_description": "Remove ads\nfor 30 Days",
+              "time_left_detail": "Ends in:"
+            },
+            "Version": 15
+          }
+        }
+      ]
+    }
+  },
+  "AppsFlyer": {
+    "TemplateId": "4rIR",
+    "TriviaTemplateId": "V676"
+  },
+  "CmpConfig": {
+    "Enabled": true
+  },
+  "MemberGetMemberConfig": {
+    "InvitePrizes": [
+      {
+        "SubscriptionDays": 3,
+        "Rewards": [],
+        "Book": null,
+        "RewardDescription": "3-day subscription to CodyCross Club"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 10
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "10 tokens"
+      },
+      {
+        "SubscriptionDays": 7,
+        "Rewards": [],
+        "Book": null,
+        "RewardDescription": "7-day subscription to CodyCross Club"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [],
+        "Book": "15e6728d-5980-408c-867b-70e866d7546c",
+        "RewardDescription": "Friendship book"
+      },
+      {
+        "SubscriptionDays": 10,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 40
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "10-day subscription to CodyCross Club + 40 tokens"
+      }
+    ],
+    "SubscriberInvitePrizes": [
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 10
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "10 tokens"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 20
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "20 tokens"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 30
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "30 tokens"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 60
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "60 tokens"
+      },
+      {
+        "SubscriptionDays": 0,
+        "Rewards": [
+          {
+            "Item": 1,
+            "Count": 50
+          }
+        ],
+        "Book": null,
+        "RewardDescription": "50 tokens"
+      }
+    ]
+  },
+  "PlayersOnMapConfig": {
+    "Enabled": true
+  },
+  "RankedEventsConfig": {
+    "MinPuzzle": 0,
+    "ScorePerPuzzleComplete": 10,
+    "Notification": {
+      "Started": false,
+      "WillEnd": false,
+      "Ended": false,
+      "WillEndOffset": "02:00:00"
+    },
+    "Enabled": true
+  },
+  "DailyChestConfig": {
+    "CollectFromStore": true,
+    "CollectFromHome": true,
+    "AllowSkipDoubleDailyRewardedAd": false,
+    "MaxPuzzleShowUnavailableStateNag": 50
+  },
+  "SkinConfig": {
+    "Version": -1108890610,
+    "UnlockPuzzle": 22,
+    "TutorialSkin": "d557e1b6-88d4-444d-aa4c-3e89a418e676",
+    "Default": {
+      "Cody": {
+        "Id": "a1a63a1c-5208-4270-9741-f0644b6b555b"
+      },
+      "Dibz": {
+        "Id": "dc312ce3-2d82-4484-ba43-dc23f2dac6d1"
+      },
+      "Liz": {
+        "Id": "162ec741-141e-44af-abbe-ec7d89164a68"
+      },
+      "Twiz": {
+        "Id": "fbd0bbde-124a-48bc-9359-f1f5e393948c"
+      },
+      "Voltz": {
+        "Id": "bf46cc9c-d303-4b79-99c4-a96a17f7867c"
+      },
+      "Header": {
+        "Id": "e2deb87f-4eb8-4fdb-aa4a-b29b3a45d895"
+      },
+      "Keyboard": {
+        "Id": "086b23ae-66b0-40f1-a959-6a1acecf7683"
+      },
+      "Pin": {
+        "Id": "3cc1b302-1f71-4ba1-9ad7-dedfdc23aaee"
+      }
+    },
+    "InitialBitz": 1000
+  },
+  "CrossPromotionConfig": {
+    "Enabled": true,
+    "InstalledDaysNeededToShow": 1,
+    "DaysToBeShown": 20
+  },
+  "SignInConfig": {
+    "GsiSignIn": {
+      "Enabled": true
+    },
+    "FacebookSignIn": {
+      "Enabled": true
+    },
+    "FaqUrl": "https://codycross-en-2-0.helpscoutdocs.com/article/1026-how-to-sync"
+  },
+  "PuzzleCompleteBarV2Config": {
+    "BarSize": 14,
+    "CostToRestartInTokens": 1,
+    "RestartCooldown": "00:30:00",
+    "Prizes": {
+      "2": {
+        "FragmentPackType": 10,
+        "Quantity": 1,
+        "Type": 20
+      },
+      "6": {
+        "FragmentPackType": 10,
+        "Quantity": 1,
+        "Type": 20
+      },
+      "14": {
+        "FragmentPackType": 10,
+        "Quantity": 1,
+        "Type": 20
+      }
+    },
+    "SubscriberPrizes": {
+      "2": {
+        "FragmentPackType": 20,
+        "Quantity": 1,
+        "Type": 20
+      },
+      "6": {
+        "FragmentPackType": 20,
+        "Quantity": 1,
+        "Type": 20
+      },
+      "14": {
+        "FragmentPackType": 20,
+        "Quantity": 1,
+        "Type": 20
+      }
+    },
+    "AlternativePrize": {
+      "Quantity": 500,
+      "Type": 6
+    },
+    "AlternativeSubscriberPrize": {
+      "Quantity": 1000,
+      "Type": 6
+    }
+  },
+  "PreModalIdfa": {
+    "Enabled": true
+  },
+  "EscadinhaConfig": {
+    "Enabled": true
+  },
+  "BookLibraryV2Config": {
+    "Version": 417830100,
+    "MaxActiveCollections": 3,
+    "DailyFreeBitz": 25,
+    "UnlockPuzzle": 20,
+    "FragmentsXp": {
+      "Common": 10,
+      "Rare": 25,
+      "Epic": 75
+    },
+    "BookReadRewards": {
+      "Common": {
+        "Quantity": 50,
+        "Type": 6
+      },
+      "Rare": {
+        "Quantity": 75,
+        "Type": 6
+      },
+      "Epic": {
+        "Quantity": 100,
+        "Type": 6
+      }
+    },
+    "BitzPerLevelSkipped": 250,
+    "FaqUrl": "https://codycross-en-2-0.helpscoutdocs.com/article/2887-how-does-the-xp-system-work-in-the-new-library"
+  },
+  "BookStoreV2Config": {
+    "PackOfferConfig": {
+      "OffersPrice": {
+        "Classic": 500,
+        "Special": 700,
+        "Ultimate": 800,
+        "Seasonal": 600
+      },
+      "Enabled": true
+    },
+    "DailyOfferConfig": {
+      "Fragments": 3,
+      "RefreshOffersCooldown": "08:00:00",
+      "OffersPrice": {
+        "Common": 500,
+        "Rare": 1000,
+        "Epic": 1500
+      },
+      "RefreshOffersPrice": [
+        5,
+        10,
+        20,
+        50
+      ],
+      "MaxActiveOffers": 3,
+      "Enabled": true
+    },
+    "FaqUrl": "https://codycross-en-2-0.helpscoutdocs.com/article/2840-how-does-the-pages-raffle-system-work/",
+    "FragmentBoxIapInLibrary": false
+  },
+  "FragmentDrawConfig": {
+    "PackConfig": {
+      "Classic": {
+        "Fragments": 5,
+        "GuaranteedFragments": {
+          "Rare": 0,
+          "Epic": 0
+        },
+        "IncompleteBookFragmentChance": 0.5
+      },
+      "Special": {
+        "Fragments": 8,
+        "GuaranteedFragments": {
+          "Rare": 0,
+          "Epic": 0
+        },
+        "IncompleteBookFragmentChance": 0.5
+      },
+      "Ultimate": {
+        "Fragments": 8,
+        "GuaranteedFragments": {
+          "Rare": 1,
+          "Epic": 1
+        },
+        "IncompleteBookFragmentChance": 0.5
+      },
+      "Seasonal": {
+        "Fragments": 5,
+        "GuaranteedFragments": {
+          "Rare": 0,
+          "Epic": 0
+        },
+        "IncompleteBookFragmentChance": 0.5
+      }
+    },
+    "BoxConfig": [
+      {
+        "BoxFragments": 15,
+        "MinCollectionFragments": 0
+      }
+    ],
+    "OddModifierConfig": {
+      "Common": 1,
+      "Rare": 0.98,
+      "Epic": 0.93
+    }
+  },
+  "ExcessFragmentsBarConfig": {
+    "Size": 100,
+    "Prize": {
+      "Quantity": 700,
+      "Type": 6
+    },
+    "ExcessFragmentSegments": {
+      "Common": 1,
+      "Rare": 2,
+      "Epic": 3
+    },
+    "Enabled": true
+  },
+  "BitzOfferV2Config": {
+    "OffersPrice": {
+      "50": 2000,
+      "200": 10000,
+      "750": 45000
+    }
+  },
+  "ReportContentConfig": {
+    "Enabled": true
+  },
+  "NotificationConfig": {
+    "CleverTapNotifications": true,
+    "TimeBombs": [
+      {
+        "Title": "CodyCross",
+        "Body": "Collect your reward!",
+        "Interval": "01:00:00"
+      },
+      {
+        "Title": "CodyCross",
+        "Body": "Collect your reward and continue the quest!",
+        "Interval": "3.00:00:00"
+      },
+      {
+        "Title": "CodyCross",
+        "Body": "CodyCross needs your help to explore the world. Come play!",
+        "Interval": "10.00:00:00"
+      },
+      {
+        "Title": "CodyCross",
+        "Body": "Are you up for the challenge of helping CodyCross today?",
+        "Interval": "25.00:00:00"
+      },
+      {
+        "Title": "CodyCross",
+        "Body": "More puzzles available in a whole new world. Play now!",
+        "Interval": "55.00:00:00"
+      },
+      {
+        "Title": "CodyCross",
+        "Body": "New puzzles available! Come challenge yourself!",
+        "Interval": "115.00:00:00"
+      }
+    ]
+  }
+}
