@@ -2,7 +2,7 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-04-18 03:25 UTC",
+    "lastUpdated": "2026-04-18 06:59 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
@@ -56831,7 +56831,7 @@
               "isMain": false
             },
             {
-              "clue": "\"Paper Roses\": A No. 1 country hit for Marie __",
+              "clue": "Paper Roses, a number one country hit for Marie __",
               "answer": "osmond",
               "isMain": false
             },
