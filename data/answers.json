@@ -2,7 +2,7 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-04-27 08:11 UTC",
+    "lastUpdated": "2026-04-28 03:59 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
@@ -24601,7 +24601,7 @@
               "isMain": false
             },
             {
-              "clue": "Medieval knightly code; a gentleman",
+              "clue": "Medieval knightly code of conduct",
               "answer": "chivalry",
               "isMain": false
             },
