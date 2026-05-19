@@ -2,7 +2,7 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-05-19 04:20 UTC",
+    "lastUpdated": "2026-05-19 09:31 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
@@ -46680,7 +46680,7 @@
               "isMain": false
             },
             {
-              "clue": "Not as bad as a migraine",
+              "clue": "Cephalgia, commonly",
               "answer": "headache",
               "isMain": false
             },
@@ -94501,7 +94501,7 @@
               "isMain": false
             },
             {
-              "clue": "Capital raised through shares",
+              "clue": "Units of ownership in a corporation",
               "answer": "stocks",
               "isMain": false
             },
@@ -99067,7 +99067,7 @@
               "isMain": false
             },
             {
-              "clue": "Not as bad as a migraine",
+              "clue": "Cephalgia, commonly",
               "answer": "headache",
               "isMain": false
             },
