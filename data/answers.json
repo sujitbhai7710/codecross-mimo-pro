@@ -2,11 +2,11 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-05-21 04:38 UTC",
+    "lastUpdated": "2026-05-21 09:26 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
-    "totalClues": 20910,
+    "totalClues": 20905,
     "updateMethod": "GitHub Actions + manual fetch"
   },
   "answers": [
@@ -54096,78 +54096,63 @@
               "isMain": false
             },
             {
-              "clue": "Violent effort to change country's leadership",
-              "answer": "uprising",
+              "clue": "Onomatopoeic toy of two banging balls and string",
+              "answer": "clackers",
               "isMain": false
             },
             {
-              "clue": "A white __ is a possession with no use",
-              "answer": "elephant",
+              "clue": "Describes hips when hula-hooping",
+              "answer": "gyrating",
               "isMain": false
             },
             {
-              "clue": "Purple highly-scented plant used in soaps, lotions",
-              "answer": "lavender",
+              "clue": "Jane __, who was Little Voice",
+              "answer": "horrocks",
               "isMain": false
             },
             {
-              "clue": "What you stuff a letter into before mailing",
-              "answer": "envelope",
+              "clue": "Crosshead screwdriver",
+              "answer": "phillips",
               "isMain": false
             },
             {
-              "clue": "Physical power",
-              "answer": "strength",
+              "clue": "Sandra Oh and Will Ferrell game show film",
+              "answer": "quiz lady",
               "isMain": false
             },
             {
-              "clue": "Whale species with knobs on the head",
-              "answer": "humpback",
+              "clue": "Russian oblast, and city on the Klyazma River",
+              "answer": "vladimir",
               "isMain": false
             },
             {
-              "clue": "Most likely",
-              "answer": "probable",
+              "clue": "Three-sided shape linked to Bermuda",
+              "answer": "triangle",
               "isMain": false
             },
             {
-              "clue": "Weather prediction made by meteorologists",
-              "answer": "forecast",
+              "clue": "Rat who mentors the Teenage Mutant Ninja Turtles",
+              "answer": "splinter",
               "isMain": false
             },
             {
-              "clue": "New York police procedural show with 12 seasons",
-              "answer": "nypd blue",
+              "clue": "Car part for dispersing heat",
+              "answer": "radiator",
               "isMain": false
             },
             {
-              "clue": "Moorish palace complex at Granada, Spain",
-              "answer": "alhambra",
+              "clue": "So Late __, Claire Keegan novel about regret",
+              "answer": "in the day",
               "isMain": false
             },
             {
-              "clue": "Malted milkball candy comes in paper carton",
-              "answer": "whoppers",
+              "clue": "Largest group of baleen whales",
+              "answer": "rorquals",
               "isMain": false
             },
             {
-              "clue": "Yearly planner to put birthdays on",
-              "answer": "calendar",
-              "isMain": false
-            },
-            {
-              "clue": "Bigeye Trevally generally prefer warmer, __ waters",
-              "answer": "tropical",
-              "isMain": false
-            },
-            {
-              "clue": "Illusionist you might see on the Las Vegas strip",
-              "answer": "magician",
-              "isMain": false
-            },
-            {
-              "clue": "Paddling in a canoe-like boat, possibly in rapids",
-              "answer": "kayaking",
+              "clue": "Feeding on leaves of a tree, by a herbivore",
+              "answer": "browsing",
               "isMain": false
             },
             {
@@ -56296,83 +56281,63 @@
               "isMain": false
             },
             {
-              "clue": "Elastic fabric that \"expands\"",
-              "answer": "spandex",
+              "clue": "Just coming into existence",
+              "answer": "nascent",
               "isMain": false
             },
             {
-              "clue": "Mary __, penned Frankenstein at age 19",
-              "answer": "shelley",
+              "clue": "A word used as a substitute for a related entity",
+              "answer": "metonym",
               "isMain": false
             },
             {
-              "clue": "Sphere-shaped body part containing the iris",
-              "answer": "eyeball",
+              "clue": "Hard, smooth plastic used to laminate tables, e.g.",
+              "answer": "formica",
               "isMain": false
             },
             {
-              "clue": "Comfortable indoor shoe",
-              "answer": "slipper",
+              "clue": "__ de Loire, French sparkling wine",
+              "answer": "crémant",
               "isMain": false
             },
             {
-              "clue": "Person who is acknowledged",
-              "answer": "honoree",
+              "clue": "Rachel, Ross, Joey, Monica, Chandler and Phoebe",
+              "answer": "friends",
               "isMain": false
             },
             {
-              "clue": "Timetables, dockets, schedules",
-              "answer": "agendas",
+              "clue": "Clothes that need washing and the place to do it",
+              "answer": "laundry",
               "isMain": false
             },
             {
-              "clue": "Tell customs you are carrying something",
-              "answer": "declare",
+              "clue": "Heel complaint caused by shoes rubbing",
+              "answer": "blister",
               "isMain": false
             },
             {
-              "clue": "One-horned, mythical horse",
-              "answer": "unicorn",
+              "clue": "Bernard, Forbes' 2024 richest person in the world",
+              "answer": "arnault",
               "isMain": false
             },
             {
-              "clue": "__ Packard aka HP, former computer company",
-              "answer": "hewlett",
+              "clue": "She plays Mermaid Barbie in the 2023 movie",
+              "answer": "dua lipa",
               "isMain": false
             },
             {
-              "clue": "Empire founded by Osman in 1290; or a padded bench",
-              "answer": "ottoman",
+              "clue": "The surroundings or home of an animal or plant",
+              "answer": "habitat",
               "isMain": false
             },
             {
-              "clue": "Canine type, expert game finders and retrievers",
-              "answer": "birddog",
+              "clue": "Eva __, jazz singer of Autumn Leaves",
+              "answer": "cassidy",
               "isMain": false
             },
             {
-              "clue": "Area using this unit of land measurement",
-              "answer": "acreage",
-              "isMain": false
-            },
-            {
-              "clue": "San __, Central Texas city, home to Spurs",
-              "answer": "antonio",
-              "isMain": false
-            },
-            {
-              "clue": "The __ Cookie, Lemmon, Matthau first movie",
-              "answer": "fortune",
-              "isMain": false
-            },
-            {
-              "clue": "To assassinate, to murder in cold blood",
-              "answer": "execute",
-              "isMain": false
-            },
-            {
-              "clue": "Place for longterm storage for meat, ice cream",
-              "answer": "freezer",
+              "clue": "Black gibbon found in Sumatra and Malaysia forests",
+              "answer": "siamang",
               "isMain": false
             }
           ]
@@ -58346,78 +58311,88 @@
               "isMain": false
             },
             {
-              "clue": "Very near the end",
-              "answer": "epilogue",
+              "clue": "Painter of Expulsion from the Garden of Eden",
+              "answer": "masaccio",
               "isMain": false
             },
             {
-              "clue": "Four times Olympic discus champion",
-              "answer": "al oerter",
+              "clue": "Won Britain's first Olympic Gold",
+              "answer": "mary rand",
               "isMain": false
             },
             {
-              "clue": "Largest Arab city in Israel",
-              "answer": "nazareth",
+              "clue": "Bloodsuckers in Netflix's Wednesday",
+              "answer": "vampires",
               "isMain": false
             },
             {
-              "clue": "Enrolled in the military",
-              "answer": "enlisted",
+              "clue": "African country in which Freddie Mercury was born",
+              "answer": "tanzania",
               "isMain": false
             },
             {
-              "clue": "Plato's infamous underwater city",
-              "answer": "atlantis",
+              "clue": "Pick an individual out of a line of suspects",
+              "answer": "identify",
               "isMain": false
             },
             {
-              "clue": "Very thin layer of tissue covering a surface",
-              "answer": "membrane",
+              "clue": "Where queens and their workers live",
+              "answer": "beehives",
               "isMain": false
             },
             {
-              "clue": "Sweet, creamy mixture that is used to cover cakes",
-              "answer": "frosting",
+              "clue": "Electromagnet formed from a coil of wire",
+              "answer": "solenoid",
               "isMain": false
             },
             {
-              "clue": "__ Park, blockbuster about a dinosaur island",
-              "answer": "jurassic",
+              "clue": "Soft talker",
+              "answer": "murmurer",
               "isMain": false
             },
             {
-              "clue": "Washington __ play at the Verizon Center",
-              "answer": "capitals",
+              "clue": "Sebastian Faulks' novels set in WWI and the 1970s",
+              "answer": "birdsong",
               "isMain": false
             },
             {
-              "clue": "Two-masted sailing vessel and a drinking glass",
-              "answer": "schooner",
+              "clue": "Emerald Fennell's 2023 aristocratic film",
+              "answer": "saltburn",
               "isMain": false
             },
             {
-              "clue": "Literature on how to prepare food",
-              "answer": "cookbook",
+              "clue": "Igor, Russian helicopter pioneer",
+              "answer": "sikorsky",
               "isMain": false
             },
             {
-              "clue": "The old ones never die, just fade away",
-              "answer": "soldiers",
+              "clue": "Busy in musical comedy Girls5eva",
+              "answer": "philipps",
               "isMain": false
             },
             {
-              "clue": "Chinese dog breed, also known as Tang Quan",
-              "answer": "chow chow",
+              "clue": "Nutrients often paired with vitamins",
+              "answer": "minerals",
               "isMain": false
             },
             {
-              "clue": "A living individual, animal or plant",
-              "answer": "organism",
+              "clue": "Conserving electricity measure from Heath, __ Week",
+              "answer": "three-day",
               "isMain": false
             },
             {
-              "clue": "Animated kid's movie with Woody and Buzz Lightyear",
-              "answer": "toy story",
+              "clue": "Dance to a Los del Rio hit, common at 90s weddings",
+              "answer": "macarena",
+              "isMain": false
+            },
+            {
+              "clue": "Ancient Egyptian timepiece that used plumb lines",
+              "answer": "merkhets",
+              "isMain": false
+            },
+            {
+              "clue": "Lizard who lived in the Chamber of Secrets",
+              "answer": "basilisk",
               "isMain": false
             },
             {
@@ -62001,7 +61976,7 @@
       "stats": {
         "groups": 20,
         "puzzles": 100,
-        "clues": 1668
+        "clues": 1663
       }
     },
     {
