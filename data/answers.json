@@ -2,7 +2,7 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-08-27 17:11 UTC",
+    "lastUpdated": "2026-08-28 11:13 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
@@ -20856,8 +20856,8 @@
               "isMain": false
             },
             {
-              "clue": "Physicist offered the Presidency of Israel",
-              "answer": "einstein",
+              "clue": "Sven the reindeer's human companion",
+              "answer": "kristoff",
               "isMain": false
             },
             {
