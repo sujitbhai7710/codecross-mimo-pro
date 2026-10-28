@@ -2,7 +2,7 @@
   "site": {
     "name": "CodyCross Answers",
     "description": "Complete CodyCross puzzle answers — all worlds, all groups, all clues",
-    "lastUpdated": "2026-10-28 05:26 UTC",
+    "lastUpdated": "2026-10-28 11:56 UTC",
     "dataSource": "CodyCross Production API (game.codycross-game.com/Puzzle/GetMundo)",
     "apiParams": "appVersion=1.0.0 (unencrypted endpoint)",
     "totalWorlds": 15,
@@ -62677,7 +62677,7 @@
               "isMain": false
             },
             {
-              "clue": "I come to bury Caesar, not to __ him",
+              "clue": "\"I come to bury Caesar, not to __ him\"",
               "answer": "praise",
               "isMain": false
             },
@@ -92946,7 +92946,7 @@
               "isMain": false
             },
             {
-              "clue": "Fast moving. like a shooting star",
+              "clue": "Fast moving, like a shooting star",
               "answer": "meteoric",
               "isMain": false
             },
@@ -105237,7 +105237,7 @@
               "isMain": false
             },
             {
-              "clue": "Polluted, anagram of umpire",
+              "clue": "Polluted; anagram of umpire",
               "answer": "impure",
               "isMain": false
             },
